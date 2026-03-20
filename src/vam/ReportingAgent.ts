@@ -1,6 +1,4 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
-
 export interface ReportResult {
   sql: string;
   explanation: string;
@@ -20,7 +18,6 @@ export class ReportingAgent {
     
     const query = userQuery.toLowerCase();
 
-    // Mock response for "failed transactions"
     if (query.includes('failed') || query.includes('error')) {
       return {
         sql: "SELECT trx_id, status_code, error_message FROM transactions WHERE status_code != '00' LIMIT 5;",
@@ -34,7 +31,6 @@ export class ReportingAgent {
       };
     }
 
-    // Default mock response
     return {
       sql: "SELECT institution_name, COUNT(*) as volume FROM transactions JOIN clients USING(client_id) GROUP BY 1;",
       explanation: "Showing volume distribution across all BSS institutional partners for today.",

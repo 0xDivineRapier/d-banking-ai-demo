@@ -1,5 +1,5 @@
 
-import { GoogleGenAI } from "@google/genai";
+import { supabase } from "@/integrations/supabase/client";
 import { LogEntry } from "./LogMonitorAgent";
 
 export type PersonaType = 'FINTECH_RAIL_BURST' | 'LENDING_PARTNER_SETTLEMENT' | 'XYZ_MOBILE_TRAFFIC' | 'PT_XYZ_INTERNAL' | 'CORE_BANKING_FAULT' | 'PT_GLOBAL_CORP';
@@ -57,9 +57,6 @@ export const PERSONAS: Record<PersonaType, PersonaProfile> = {
   }
 };
 
-/**
- * SimulationEngine class for generating mock banking telemetry logs.
- */
 export class SimulationEngine {
   constructor() {}
 
@@ -85,53 +82,25 @@ export class SimulationEngine {
   }
 
   async generateStream(persona: PersonaType, entropy: number): Promise<LogEntry[]> {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) {
-      console.warn("GEMINI_API_KEY not found, falling back to basic logs.");
-      return this.generateSystemLogs(10);
-    }
-
-    const ai = new GoogleGenAI({ apiKey });
     const profile = PERSONAS[persona];
-    
-    const prompt = `
-      You are a high-fidelity synthetic data generator for Bank XYZ.
-      Generate ${Math.min(20, Math.floor(profile.volume / 10))} realistic banking transaction logs for the persona: ${profile.label}.
-      
-      Persona Context: ${profile.description}
-      Average Amount: ${profile.avgAmount}
-      Entropy Level: ${entropy} (0.0 = perfect, 1.0 = chaotic)
-      
-      Requirements:
-      - Use SNAP BI JSON format for 'raw_payload' if protocol is 'SNAP_BI'.
-      - For 'PT_DOZN_INDONESIA', simulate corporate operations: payroll (bulk), vendor payments (high value), and daily operational expenses.
-      - Inject anomalies if entropy > 0.5 (e.g., duplicate trxId, invalid signature, timeout).
-      - Output MUST be a JSON array of LogEntry objects.
-      
-      LogEntry Schema:
-      {
-        timestamp: string (ISO8601),
-        service_module: string (CORE|SNAP|BI-FAST|RTGS),
-        institution_id: string,
-        protocol: 'ISO8583' | 'SNAP_BI' | 'SOCKET',
-        severity: 'INFO' | 'WARN' | 'CRITICAL',
-        error_code: string ('00' for success, '68' timeout, '91' host down, '4017300' invalid signature),
-        raw_payload: string (JSON or raw string),
-        metadata: object
-      }
-    `;
 
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json"
-        }
+      const { data, error } = await supabase.functions.invoke("simulation-stream", {
+        body: {
+          persona: profile.label,
+          entropy,
+          volume: profile.volume,
+          avgAmount: profile.avgAmount,
+          description: profile.description,
+        },
       });
-      
-      const logs = JSON.parse(response.text);
-      return logs;
+
+      if (error) {
+        console.warn("Simulation edge function error, falling back to basic logs:", error);
+        return this.generateSystemLogs(10);
+      }
+
+      return Array.isArray(data) ? data : this.generateSystemLogs(10);
     } catch (error) {
       console.error("Simulation Stream Error:", error);
       return this.generateSystemLogs(5);
