@@ -1,0 +1,299 @@
+
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { 
+  Activity, 
+  ShieldAlert, 
+  TrendingUp, 
+  Zap, 
+  Search, 
+  MessageSquare, 
+  Cpu, 
+  Clock, 
+  AlertTriangle,
+  RefreshCw,
+  Terminal,
+  Server,
+  Bell,
+  CheckCircle2,
+  ChevronRight,
+  TrendingDown,
+  Info,
+  Network,
+  Ghost,
+  Database,
+  ArrowUpRight,
+  ShieldX
+} from 'lucide-react';
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts';
+import { LogMonitorAgent, LogEntry, AgentDiagnosis } from './LogMonitorAgent';
+import { ReportingAgent, ReportResult } from './ReportingAgent';
+import { SimulationEngine } from './SimulationEngine';
+import { LimitAgent, LimitPrediction, VolumeStat } from './LimitAgent';
+
+export default function OpsDeskModule() {
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [diagnosis, setDiagnosis] = useState<AgentDiagnosis | null>(null);
+  const [supportQuery, setSupportQuery] = useState('');
+  const [supportResult, setSupportResult] = useState<ReportResult | null>(null);
+  const [isQuerying, setIsQuerying] = useState(false);
+  const [prediction, setPrediction] = useState<LimitPrediction | null>(null);
+  const [quotaExceeded, setQuotaExceeded] = useState(false);
+  
+  const monitorAgent = useRef(new LogMonitorAgent());
+  const reportAgent = useRef(new ReportingAgent());
+  const limitAgent = useRef(new LimitAgent());
+  const engine = useRef(new SimulationEngine());
+
+  // Real-time log simulation - Increased interval to 10s to conserve quota
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const newLogs = await engine.current.generateSystemLogs(1, Math.random() > 0.95);
+      setLogs(prev => [...prev.slice(-14), ...newLogs]);
+      if (newLogs[0].severity === 'CRITICAL') {
+        try {
+          const diag = await monitorAgent.current.analyzeLogs(newLogs);
+          if (diag.diagnosis.classification === 'API_OVERLOAD') {
+            setQuotaExceeded(true);
+          } else {
+            setQuotaExceeded(false);
+            setDiagnosis(diag);
+          }
+        } catch (err) {
+          console.error("Diagnosis error", err);
+        }
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Predictive Limit Analysis
+  const volumeData = useMemo<VolumeStat[]>(() => {
+    return Array.from({ length: 24 }, (_, i) => ({
+      time: `${i}:00`,
+      volume: 10 + Math.random() * 60,
+    }));
+  }, []);
+
+  useEffect(() => {
+    const runPrediction = async () => {
+      const res = await limitAgent.current.predictBreach(volumeData, 100);
+      if (res.risk_level === 'OVERLOAD') {
+        setQuotaExceeded(true);
+      }
+      setPrediction(res);
+    };
+    runPrediction();
+  }, [volumeData]);
+
+  const handleSupportSearch = async () => {
+    if (!supportQuery) return;
+    setIsQuerying(true);
+    setQuotaExceeded(false);
+    try {
+      const res = await reportAgent.current.queryInsights(supportQuery);
+      setSupportResult(res);
+    } catch (e: any) {
+      console.error(e);
+      if (e.message?.includes('429')) setQuotaExceeded(true);
+    } finally {
+      setIsQuerying(false);
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
+      {quotaExceeded && (
+        <div className="bg-amber-600 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between animate-in slide-in-from-top duration-500">
+           <div className="flex items-center gap-3">
+              <ShieldX size={20} />
+              <div className="text-xs font-bold">
+                 <p className="uppercase tracking-widest font-black">AI Service Quota Exceeded</p>
+                 <p className="opacity-80">Real-time proactive diagnostics are temporarily running in fallback mode. Deep analysis will resume shortly.</p>
+              </div>
+           </div>
+           <button onClick={() => setQuotaExceeded(false)} className="text-white/50 hover:text-white"><X size={18} /></button>
+        </div>
+      )}
+
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div>
+           <h2 className="text-4xl font-black text-slate-800 tracking-tighter">Operations Desk</h2>
+           <p className="text-slate-500 font-medium">Bank XYZ Sentinel AI • Proactive Monitoring & Troubleshooting</p>
+        </div>
+        <div className="flex items-center gap-3">
+           <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span className="text-[10px] font-black uppercase tracking-widest">Gateway Healthy</span>
+           </div>
+           <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl shadow-lg">
+              <Network size={14} className="text-blue-400" />
+              <span className="text-[10px] font-black uppercase tracking-widest">XYZ-H2H-CENTRAL</span>
+           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-8 space-y-8">
+          
+          <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                 <TrendingUp size={20} className="text-blue-600" />
+                 <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Predictive Capacity Monitor</h3>
+              </div>
+              {prediction?.projected_breach_time && (
+                <div className={`text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 ${
+                  prediction.risk_level === 'CRITICAL' || prediction.risk_level === 'HIGH' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
+                }`}>
+                   <AlertTriangle size={12} /> Limit Breach Projected: {prediction.projected_breach_time} WIB
+                </div>
+              )}
+            </div>
+            
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={volumeData}>
+                  <defs>
+                    <linearGradient id="colorVol" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="time" hide />
+                  <YAxis hide domain={[0, 100]} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="volume" stroke="#3B82F6" fillOpacity={1} fill="url(#colorVol)" strokeWidth={3} />
+                  <Area type="monotone" dataKey="limit" stroke="#EF4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+               <div className="space-y-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI Recommendation</p>
+                  <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || "Analyzing traffic patterns..."}</p>
+               </div>
+               <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
+                  Apply Limit Override
+               </button>
+            </div>
+          </div>
+
+          <div className="bg-[#020617] rounded-[40px] border border-white/10 shadow-2xl overflow-hidden flex flex-col h-[400px]">
+             <div className="p-6 bg-slate-900/50 border-b border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-blue-400">
+                   <Terminal size={18} />
+                   <h3 className="text-[11px] font-black uppercase tracking-widest font-mono">Bank XYZ Sentinel AI Diagnostic Feed</h3>
+                </div>
+                <div className="flex items-center gap-1.5">
+                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                   <span className="text-[9px] font-mono text-emerald-500 uppercase">Live Trace</span>
+                </div>
+             </div>
+             
+             <div className="flex-1 overflow-y-auto p-8 font-mono text-[11px] space-y-3 custom-scrollbar">
+                {diagnosis && (
+                  <div className={`p-6 rounded-3xl border mb-6 animate-in slide-in-from-top duration-500 ${
+                    diagnosis.diagnosis.classification === 'Systemic' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs">
+                       <ShieldAlert size={14} /> AI Analysis: {diagnosis.diagnosis.classification} Issue Detected
+                    </div>
+                    <p className="text-xs opacity-80 leading-relaxed font-bold">Root Cause Hypothesis: {diagnosis.diagnosis.root_cause_hypothesis}</p>
+                  </div>
+                )}
+                {logs.map((log, i) => (
+                   <div key={i} className={`flex gap-4 py-1 border-l-2 pl-4 ${
+                     log.severity === 'CRITICAL' ? 'border-red-500 text-red-400' : 'border-blue-500/20 text-slate-500'
+                   }`}>
+                      <span className="opacity-30">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
+                      <span className="font-black w-20 shrink-0">{log.service_module}</span>
+                      <span className="flex-1 truncate">{log.raw_payload}</span>
+                   </div>
+                ))}
+             </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-4 space-y-8">
+          <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm flex flex-col h-[520px]">
+             <div className="flex items-center gap-3 mb-6">
+                <MessageSquare size={24} className="text-blue-600" />
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">Support Copilot</h3>
+             </div>
+             <div className="relative mb-6">
+                <input 
+                   type="text" 
+                   value={supportQuery}
+                   onChange={(e) => setSupportQuery(e.target.value)}
+                   onKeyDown={(e) => e.key === 'Enter' && handleSupportSearch()}
+                   placeholder="e.g. 'Show failed tx for Hasjrat last hour'"
+                   className="w-full pl-6 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-bold focus:ring-2 focus:ring-blue-500 outline-none shadow-inner"
+                />
+                <button onClick={handleSupportSearch} className="absolute right-3 top-3 p-1.5 bg-slate-900 text-white rounded-lg">
+                   {isQuerying ? <RefreshCw className="animate-spin" size={16} /> : <Search size={16} />}
+                </button>
+             </div>
+             <div className="flex-1 overflow-y-auto space-y-4 no-scrollbar">
+                {supportResult ? (
+                   <div className="space-y-4 animate-in fade-in duration-300">
+                      <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                         <p className="text-[10px] font-bold text-slate-600 italic">"{supportResult.explanation}"</p>
+                      </div>
+                      <div className="bg-slate-900 p-4 rounded-xl">
+                         <pre className="text-[9px] font-mono text-emerald-400 whitespace-pre-wrap">{supportResult.sql}</pre>
+                      </div>
+                      <div className="border border-slate-100 rounded-2xl overflow-hidden">
+                         <table className="w-full text-[9px]">
+                            <thead className="bg-slate-50">
+                               <tr>{Object.keys(supportResult.data[0] || {}).map(k => <th key={k} className="px-3 py-2 text-left text-slate-400 font-black">{k}</th>)}</tr>
+                            </thead>
+                            <tbody>
+                               {supportResult.data.map((row, i) => (
+                                  <tr key={i} className="border-t border-slate-50">
+                                     {Object.values(row).map((v: any, j) => <td key={j} className="px-3 py-2 text-slate-600 font-bold">{v}</td>)}
+                                  </tr>
+                               ))}
+                            </tbody>
+                         </table>
+                      </div>
+                   </div>
+                ) : (
+                   <div className="h-full flex flex-col items-center justify-center opacity-20 text-center">
+                      <Ghost size={48} className="mb-4" />
+                      <p className="text-[10px] font-black uppercase tracking-widest">Awaiting Command...<br/>Translate natural language to SQL instantly.</p>
+                   </div>
+                )}
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Fix: Made className prop optional to resolve type error at usage site (line 122)
+const X = ({ size, className }: { size: number, className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+  </svg>
+);
