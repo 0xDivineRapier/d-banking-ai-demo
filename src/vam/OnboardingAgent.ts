@@ -73,7 +73,7 @@ export class OnboardingAgent {
    * Processes an image (OCR) to extract merchant details.
    */
   async processDocumentScan(base64Data: string, mimeType: string): Promise<ExtractedCorporateData> {
-    const response = await this.ai.models.generateContent({
+    const response = await this.getAI().models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [
         {
