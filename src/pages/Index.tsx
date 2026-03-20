@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
   CreditCard, 
@@ -25,14 +25,16 @@ import FinanceCockpit from '@/vam/FinanceCockpit';
 import OnboardingModule from '@/vam/OnboardingModule';
 import OpsDeskModule from '@/vam/OpsDeskModule';
 import VaTransactionsModule from '@/vam/VaTransactionsModule';
+import { ProductTour, TourTriggerButton, TourStep } from '@/components/ProductTour';
 
 // --- Navigation Data ---
 const NAV_ITEMS = [
-  { label: 'Operations', icon: Activity, to: '/admin', description: 'Monitoring & Diagnostics' },
-  { label: 'Onboarding', icon: Users, to: '/config', description: 'Merchant Registry' },
+  { label: 'Operations', icon: Activity, to: '/admin', description: 'Monitoring & Diagnostics', tourId: 'nav-operations' },
+  { label: 'Onboarding', icon: Users, to: '/config', description: 'Merchant Registry', tourId: 'nav-onboarding' },
   { 
     label: 'Transactions', icon: CreditCard,
     description: 'VA & Payment Rails',
+    tourId: 'nav-transactions',
     subItems: [
       { label: 'Real-time Inquiry', to: '/va/inquiry?tab=inquiry' },
       { label: 'Batch Processing', to: '/va/inquiry?tab=batch' },
@@ -42,6 +44,7 @@ const NAV_ITEMS = [
   { 
     label: 'Treasury', icon: Layout,
     description: 'Liquidity & Recon',
+    tourId: 'nav-treasury',
     subItems: [
       { label: 'Liquidity Heatmap', to: '/finance/cockpit?tab=heatmap' },
       { label: 'ERP Reconciliation', to: '/finance/cockpit?tab=reconciliation' },
@@ -51,6 +54,7 @@ const NAV_ITEMS = [
   { 
     label: 'Middleware', icon: Terminal,
     description: 'SNAP BI & Security',
+    tourId: 'nav-middleware',
     subItems: [
       { label: 'SNAP BI Tools', to: '/dev/ai' },
       { label: 'Credential Guard', to: '/dev/security' },
@@ -83,7 +87,7 @@ function SidebarNavItem({ item, collapsed }: { item: any; collapsed: boolean }) 
 
   if (collapsed) {
     return (
-      <div className="px-2 mb-1">
+      <div className="px-2 mb-1" data-tour={item.tourId}>
         <Link
           to={item.to || item.subItems?.[0]?.to || '#'}
           className={`flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 group relative ${
@@ -100,7 +104,7 @@ function SidebarNavItem({ item, collapsed }: { item: any; collapsed: boolean }) 
   }
 
   return (
-    <div className="px-3 mb-0.5">
+    <div className="px-3 mb-0.5" data-tour={item.tourId}>
       {hasSubItems ? (
         <div>
           <button
@@ -174,11 +178,14 @@ function SidebarNavItem({ item, collapsed }: { item: any; collapsed: boolean }) 
 // --- Sidebar ---
 function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   return (
-    <aside className={`zenith-gradient flex flex-col h-full shrink-0 transition-all duration-300 overflow-hidden ${
-      collapsed ? 'w-[60px]' : 'w-[260px]'
-    }`}>
+    <aside
+      data-tour="sidebar"
+      className={`zenith-gradient flex flex-col h-full shrink-0 transition-all duration-300 overflow-hidden ${
+        collapsed ? 'w-[60px]' : 'w-[260px]'
+      }`}
+    >
       {/* Logo */}
-      <div className={`p-4 ${collapsed ? 'px-2.5' : ''}`}>
+      <div className={`p-4 ${collapsed ? 'px-2.5' : ''}`} data-tour="sidebar-logo">
         <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3 px-2'}`}>
           <div className="w-9 h-9 zenith-gradient-accent rounded-xl flex items-center justify-center shadow-lg shrink-0">
             <Cpu size={18} className="text-white" />
@@ -207,7 +214,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       </nav>
 
       {/* Footer */}
-      <div className={`border-t border-sidebar-border/40 ${collapsed ? 'p-2' : 'p-4'}`}>
+      <div className={`border-t border-sidebar-border/40 ${collapsed ? 'p-2' : 'p-4'}`} data-tour="system-status">
         {!collapsed ? (
           <div className="px-2 space-y-2">
             <div className="flex items-center gap-2">
@@ -230,13 +237,14 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
 }
 
 // --- Header ---
-function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
+function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void; onStartTour: () => void }) {
   return (
-    <header className="h-14 bg-card border-b border-border/60 flex items-center justify-between px-4 shrink-0 z-50">
+    <header className="h-14 bg-card border-b border-border/60 flex items-center justify-between px-4 shrink-0 z-50" data-tour="header">
       <div className="flex items-center gap-2">
         <button
           onClick={onToggleSidebar}
           className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground"
+          data-tour="sidebar-toggle"
         >
           <Menu size={18} />
         </button>
@@ -251,20 +259,23 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
 
       <div className="flex items-center gap-2">
         {/* Search */}
-        <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 hover:bg-muted text-muted-foreground text-[11px] transition-colors border border-border/50">
+        <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 hover:bg-muted text-muted-foreground text-[11px] transition-colors border border-border/50" data-tour="search">
           <Search size={13} />
           <span>Search...</span>
           <kbd className="ml-4 px-1.5 py-0.5 rounded bg-card border border-border text-[9px] font-mono">⌘K</kbd>
         </button>
 
+        {/* Tour Button */}
+        <TourTriggerButton onClick={onStartTour} />
+
         {/* Status pill */}
-        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20">
+        <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20" data-tour="status-pill">
           <div className="status-dot-healthy" />
           <span className="text-[10px] font-semibold text-accent font-mono">ALL SYSTEMS NOMINAL</span>
         </div>
 
         {/* Notifications */}
-        <button className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground">
+        <button className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground" data-tour="notifications">
           <Bell size={17} />
           <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-card" />
         </button>
@@ -284,15 +295,102 @@ function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   );
 }
 
+// --- Tour Steps Definition ---
+const TOUR_STEPS: TourStep[] = [
+  {
+    target: '[data-tour="sidebar-logo"]',
+    title: 'Welcome to Zenith VAM',
+    content: 'This is the Zenith Banking Virtual Account Management Control Plane — your AI-powered command center for Bank XYZ operations.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour="nav-operations"]',
+    title: 'Operations Desk',
+    content: 'Monitor real-time system health with AI Sentinel diagnostics. The AI agent analyzes log patterns, detects anomalies, and recommends circuit breaker actions.',
+    placement: 'right',
+    route: '/admin',
+  },
+  {
+    target: '[data-tour="nav-onboarding"]',
+    title: 'AI-Powered Onboarding',
+    content: 'Register merchants using AI chat or document scanning (OCR). The AI agent extracts company details from NPWP documents and business certificates automatically.',
+    placement: 'right',
+    route: '/config',
+  },
+  {
+    target: '[data-tour="nav-transactions"]',
+    title: 'VA Transactions',
+    content: 'Real-time inquiry, batch processing, and exception management for Virtual Account payments — all built on SNAP BI standards.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour="nav-treasury"]',
+    title: 'Treasury Cockpit',
+    content: 'Liquidity heatmaps, ERP reconciliation with AI matching, fee audit detection, and suspense fund resolution — powered by the Finance Copilot AI.',
+    placement: 'right',
+    route: '/finance/cockpit',
+  },
+  {
+    target: '[data-tour="nav-middleware"]',
+    title: 'Middleware Monitoring',
+    content: 'SNAP BI development tools, credential management, and a synthetic data sandbox with AI-generated banking telemetry for load testing.',
+    placement: 'right',
+  },
+  {
+    target: '[data-tour="status-pill"]',
+    title: 'System Health at a Glance',
+    content: 'Real-time system status indicator. Green means all SNAP gateways, core banking rails, and settlement engines are operating normally.',
+    placement: 'bottom',
+  },
+  {
+    target: '[data-tour="sidebar-toggle"]',
+    title: 'Collapse Sidebar',
+    content: 'Toggle the sidebar to icon-only mode for more screen real estate. Perfect for focused dashboard monitoring.',
+    placement: 'bottom',
+  },
+];
+
+const TOUR_STORAGE_KEY = 'zenith-tour-completed';
+
 // --- Main Layout ---
 export default function Index() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Auto-start tour on first visit
+  useEffect(() => {
+    const completed = localStorage.getItem(TOUR_STORAGE_KEY);
+    if (!completed) {
+      // Small delay so the page renders first
+      const timer = setTimeout(() => {
+        setSidebarCollapsed(false); // Ensure sidebar is open for tour
+        setTourOpen(true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleStartTour = useCallback(() => {
+    setSidebarCollapsed(false);
+    setTourOpen(true);
+  }, []);
+
+  const handleTourComplete = useCallback(() => {
+    setTourOpen(false);
+    localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+  }, []);
+
+  const handleTourClose = useCallback(() => {
+    setTourOpen(false);
+    localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+  }, []);
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div className="flex-1 flex flex-col min-w-0">
-        <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+        <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} onStartTour={handleStartTour} />
         <main className="flex-1 overflow-y-auto">
           <div className="p-6 lg:p-8 pb-20 max-w-[1600px] mx-auto">
             <Routes>
@@ -313,6 +411,14 @@ export default function Index() {
           </div>
         </main>
       </div>
+
+      <ProductTour
+        steps={TOUR_STEPS}
+        isOpen={tourOpen}
+        onClose={handleTourClose}
+        onComplete={handleTourComplete}
+        navigate={navigate}
+      />
     </div>
   );
 }
