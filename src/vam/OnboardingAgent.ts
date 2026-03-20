@@ -11,17 +11,22 @@ export interface ExtractedCorporateData {
 }
 
 export class OnboardingAgent {
-  private ai: GoogleGenAI;
+  private ai: GoogleGenAI | null = null;
 
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+  private getAI(): GoogleGenAI {
+    if (!this.ai) {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error("VITE_GEMINI_API_KEY is not set. Please add it to use AI features.");
+      this.ai = new GoogleGenAI({ apiKey });
+    }
+    return this.ai;
   }
 
   /**
    * Processes a chat message to extract merchant details.
    */
   async processOnboardingChat(message: string, currentData: any): Promise<{ updatedData: ExtractedCorporateData; aiResponse: string }> {
-    const response = await this.ai.models.generateContent({
+    const response = await this.getAI().models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [
         {
@@ -68,7 +73,7 @@ export class OnboardingAgent {
    * Processes an image (OCR) to extract merchant details.
    */
   async processDocumentScan(base64Data: string, mimeType: string): Promise<ExtractedCorporateData> {
-    const response = await this.ai.models.generateContent({
+    const response = await this.getAI().models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [
         {
