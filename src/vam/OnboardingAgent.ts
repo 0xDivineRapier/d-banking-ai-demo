@@ -26,7 +26,7 @@ export class OnboardingAgent {
    * Processes a chat message to extract merchant details.
    */
   async processOnboardingChat(message: string, currentData: any): Promise<{ updatedData: ExtractedCorporateData; aiResponse: string }> {
-    const response = await this.ai.models.generateContent({
+    const response = await this.getAI().models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [
         {
