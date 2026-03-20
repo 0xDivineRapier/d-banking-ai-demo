@@ -14,10 +14,15 @@ export interface AssistantResponse {
 }
 
 export class FinanceAssistantAgent {
-  private ai: GoogleGenAI;
+  private ai: GoogleGenAI | null = null;
 
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+  private getAI(): GoogleGenAI {
+    if (!this.ai) {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error("VITE_GEMINI_API_KEY is not set. Please add it to use AI features.");
+      this.ai = new GoogleGenAI({ apiKey });
+    }
+    return this.ai;
   }
 
   async processQuery(query: string): Promise<AssistantResponse> {
