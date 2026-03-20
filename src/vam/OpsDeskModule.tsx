@@ -22,7 +22,8 @@ import {
   Ghost,
   Database,
   ArrowUpRight,
-  ShieldX
+  ShieldX,
+  X
 } from 'lucide-react';
 import { 
   AreaChart, 
