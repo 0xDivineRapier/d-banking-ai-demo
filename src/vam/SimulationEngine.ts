@@ -85,7 +85,7 @@ export class SimulationEngine {
   }
 
   async generateStream(persona: PersonaType, entropy: number): Promise<LogEntry[]> {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
       console.warn("GEMINI_API_KEY not found, falling back to basic logs.");
       return this.generateSystemLogs(10);

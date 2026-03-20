@@ -65,7 +65,7 @@ const AIArchitectChat = () => {
     setIsTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: userMsg,
@@ -151,7 +151,7 @@ const AIArchitectChat = () => {
 // --- Synthetic Sandbox Component ---
 
 const SyntheticSandbox = () => {
-  const [persona, setPersona] = useState<PersonaType>('PT_DOZN_INDONESIA');
+  const [persona, setPersona] = useState<PersonaType>('PT_GLOBAL_CORP');
   const [entropy, setEntropy] = useState(0.2);
   const [logs, setLogs] = useState<any[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
@@ -411,7 +411,7 @@ const PayloadHealerUI = () => {
   const healPayload = async () => {
     setIsHealing(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `Analyze this SNAP BI JSON payload and suggest fixes for compliance.
