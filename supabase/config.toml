@@ -1,0 +1,10 @@
+project_id = "ymzrwbzcmgfmlqdaqvcv"
+
+[functions.onboarding-ai]
+verify_jwt = false
+
+[functions.finance-assistant]
+verify_jwt = false
+
+[functions.simulation-stream]
+verify_jwt = false

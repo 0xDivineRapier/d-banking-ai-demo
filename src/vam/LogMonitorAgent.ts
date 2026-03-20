@@ -1,5 +1,4 @@
 
-import { GoogleGenAI } from "@google/genai";
 
 export interface LogEntry {
   timestamp: string;
