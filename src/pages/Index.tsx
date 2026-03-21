@@ -391,38 +391,40 @@ export default function Index() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} onStartTour={handleStartTour} />
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-6 lg:p-8 pb-20 max-w-[1600px] mx-auto">
-            <Routes>
-              <Route path="/" element={<OpsDeskModule />} />
-              <Route path="/admin" element={<OpsDeskModule />} />
-              <Route path="/finance/cockpit" element={<FinanceCockpit />} />
-              <Route path="/dev/:tab" element={<DevPortal />} />
-              <Route path="/dev" element={<DevPortal />} />
-              <Route path="/config" element={<OnboardingModule />} />
-              <Route path="/va/inquiry" element={<VaTransactionsModule />} />
-              <Route path="*" element={
-                <div className="flex flex-col items-center justify-center h-[60vh] text-muted-foreground/30">
-                  <Database size={48} className="mb-4" />
-                  <h2 className="text-lg font-semibold">Module Loading...</h2>
-                </div>
-              } />
-            </Routes>
-          </div>
-        </main>
-      </div>
+    <I18nProvider>
+      <div className="flex h-screen bg-background overflow-hidden">
+        <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Header onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} onStartTour={handleStartTour} />
+          <main className="flex-1 overflow-y-auto">
+            <div className="p-6 lg:p-8 pb-20 max-w-[1600px] mx-auto">
+              <Routes>
+                <Route path="/" element={<OpsDeskModule />} />
+                <Route path="/admin" element={<OpsDeskModule />} />
+                <Route path="/finance/cockpit" element={<FinanceCockpit />} />
+                <Route path="/dev/:tab" element={<DevPortal />} />
+                <Route path="/dev" element={<DevPortal />} />
+                <Route path="/config" element={<OnboardingModule />} />
+                <Route path="/va/inquiry" element={<VaTransactionsModule />} />
+                <Route path="*" element={
+                  <div className="flex flex-col items-center justify-center h-[60vh] text-muted-foreground/30">
+                    <Database size={48} className="mb-4" />
+                    <h2 className="text-lg font-semibold">Module Loading...</h2>
+                  </div>
+                } />
+              </Routes>
+            </div>
+          </main>
+        </div>
 
-      <ProductTour
-        steps={TOUR_STEPS}
-        isOpen={tourOpen}
-        onClose={handleTourClose}
-        onComplete={handleTourComplete}
-        navigate={navigate}
-      />
-    </div>
+        <ProductTour
+          steps={TOUR_STEPS}
+          isOpen={tourOpen}
+          onClose={handleTourClose}
+          onComplete={handleTourComplete}
+          navigate={navigate}
+        />
+      </div>
+    </I18nProvider>
   );
 }
