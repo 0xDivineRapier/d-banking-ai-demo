@@ -1,18 +1,17 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { 
   Zap, 
   RefreshCw, 
   ShieldCheck, 
   BrainCircuit,
-  Code2,
   Send,
   Sparkles,
   Terminal,
   Activity,
   Globe,
   Lock,
-  ArrowRight,
   ShieldAlert,
   CheckCircle2,
   Clock,
@@ -24,10 +23,8 @@ import {
   Trash2,
   Plus,
   AlertTriangle,
-  FileText,
   X,
   Bug,
-  Download,
   Eye,
   Search,
   ChevronRight,
@@ -37,11 +34,19 @@ import {
   Database,
   FlaskConical,
   Stethoscope,
-  Wind
+  Wind,
+  EyeOff,
+  Copy,
+  RotateCcw,
+  Wifi,
+  WifiOff,
+  Server,
+  Gauge
 } from 'lucide-react';
-import { GoogleGenAI, Type } from "@google/genai";
+import { supabase } from '@/integrations/supabase/client';
 import { SimulationEngine, PERSONAS, PersonaType } from './SimulationEngine';
-import { DoznResilientClient, sdkUsageExample } from './resilient-sdk';
+import { DoznResilientClient } from './resilient-sdk';
+import { CredentialManager, AuditEntry } from './CredentialManager';
 
 // --- AI Architect Chat Component ---
 
@@ -65,19 +70,13 @@ const AIArchitectChat = () => {
     setIsTyping(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: userMsg,
-        config: {
-          systemInstruction: `You are the Bank XYZ Senior Solutions Architect. 
-          You help developers integrate with the Zenith Banking VAM Control Plane using SNAP BI protocols.
-          Be technical, helpful, and concise. Refer to Bank XYZ and its resilient SDK.`
-        }
+      const { data, error } = await supabase.functions.invoke("architect-chat", {
+        body: { action: "chat", message: userMsg },
       });
-      setMessages(prev => [...prev, { role: 'ai', text: response.text || "I'm processing that request..." }]);
+      if (error) throw error;
+      setMessages(prev => [...prev, { role: 'ai', text: data.reply || "I'm processing that request..." }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'ai', text: "Connection to Architect Brain lost. Please check your API key." }]);
+      setMessages(prev => [...prev, { role: 'ai', text: "Connection to Architect Brain temporarily unavailable. Please try again." }]);
     } finally {
       setIsTyping(false);
     }
@@ -181,7 +180,7 @@ const SyntheticSandbox = () => {
           <div className="space-y-6">
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Persona</label>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto custom-scrollbar">
                 {Object.values(PERSONAS).map(p => (
                   <button 
                     key={p.id}
@@ -205,18 +204,11 @@ const SyntheticSandbox = () => {
                 <span className="text-[10px] font-mono font-bold text-emerald-600">{(entropy * 100).toFixed(0)}%</span>
               </div>
               <input 
-                type="range" 
-                min="0" 
-                max="1" 
-                step="0.1" 
+                type="range" min="0" max="1" step="0.1" 
                 value={entropy}
                 onChange={(e) => setEntropy(parseFloat(e.target.value))}
                 className="w-full accent-emerald-500"
               />
-              <div className="flex justify-between text-[8px] font-black text-slate-300 uppercase tracking-widest">
-                <span>Deterministic</span>
-                <span>Chaotic</span>
-              </div>
             </div>
 
             <button 
@@ -251,20 +243,16 @@ const SyntheticSandbox = () => {
               logs.map((log, i) => (
                 <div key={i} className="p-3 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-in slide-in-from-right duration-300">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="text-slate-500">[{log.timestamp.split('T')[1].split('.')[0]}]</span>
+                    <span className="text-slate-500">[{log.timestamp?.split('T')[1]?.split('.')[0] || '00:00:00'}]</span>
                     <span className={`px-1.5 py-0.5 rounded-[4px] text-[8px] font-black ${
                       log.severity === 'CRITICAL' ? 'bg-rose-500 text-white' : 
                       log.severity === 'WARN' ? 'bg-amber-500 text-white' : 'bg-emerald-500 text-white'
-                    }`}>
-                      {log.severity}
-                    </span>
+                    }`}>{log.severity}</span>
                     <span className="text-indigo-400 font-black">{log.service_module}</span>
                     <span className="text-slate-400">{log.protocol}</span>
                     <span className="ml-auto text-slate-500">{log.institution_id}</span>
                   </div>
-                  <div className="text-slate-300 break-all">
-                    {log.raw_payload}
-                  </div>
+                  <div className="text-slate-300 break-all">{log.raw_payload}</div>
                 </div>
               ))
             )}
@@ -331,15 +319,11 @@ const SDKDemo = () => {
               <button 
                 onClick={() => setMode('sandbox')}
                 className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'sandbox' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}
-              >
-                Sandbox
-              </button>
+              >Sandbox</button>
               <button 
                 onClick={() => setMode('production')}
                 className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'production' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400'}`}
-              >
-                Production
-              </button>
+              >Production</button>
             </div>
 
             <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
@@ -389,9 +373,7 @@ const SDKDemo = () => {
                   log.includes('[ERROR]') ? 'text-rose-400' : 
                   log.includes('[HEALER]') ? 'text-amber-400' : 
                   log.includes('[SUCCESS]') ? 'text-emerald-400' : 'text-slate-400'
-                }`}>
-                  {log}
-                </div>
+                }`}>{log}</div>
               ))
             )}
           </div>
@@ -411,18 +393,13 @@ const PayloadHealerUI = () => {
   const healPayload = async () => {
     setIsHealing(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `Analyze this SNAP BI JSON payload and suggest fixes for compliance.
-        Payload: ${payload}
-        Requirement: Must follow Bank Indonesia SNAP BI v2.0 schema.
-        Return JSON with fields: status (CORRUPT/VALID), fixes (array of strings), healed_payload (stringified JSON).`,
-        config: { responseMimeType: 'application/json' }
+      const { data, error } = await supabase.functions.invoke("architect-chat", {
+        body: { action: "heal_payload", payload },
       });
-      setSuggestion(JSON.parse(response.text || '{}'));
+      if (error) throw error;
+      setSuggestion(data);
     } catch (e) {
-      console.error(e);
+      setSuggestion({ status: 'CORRUPT', fixes: ['Unable to reach AI gateway. Check network.'], healed_payload: payload });
     } finally {
       setIsHealing(false);
     }
@@ -463,19 +440,16 @@ const PayloadHealerUI = () => {
               </span>
               <Sparkles size={20} className="text-indigo-400" />
             </div>
-            
             <div className="space-y-4">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Required Fixes</p>
               <div className="space-y-2">
                 {suggestion.fixes?.map((f: string, i: number) => (
                   <div key={i} className="flex items-center gap-3 text-xs text-slate-300">
-                    <AlertTriangle size={14} className="text-amber-500 shrink-0" />
-                    {f}
+                    <AlertTriangle size={14} className="text-amber-500 shrink-0" />{f}
                   </div>
                 ))}
               </div>
             </div>
-
             <div className="space-y-4">
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Healed Payload</p>
               <pre className="p-6 bg-slate-800 rounded-2xl text-[10px] text-emerald-400 font-mono overflow-x-auto">
@@ -496,40 +470,281 @@ const PayloadHealerUI = () => {
   );
 };
 
-// --- Infrastructure Ontology Component ---
+// --- Credential Guard Component ---
 
-const FeatureExplorer = () => {
-  const nodes = [
-    { id: 'CORE', label: 'Sampoerna Mobile Core', status: 'Healthy', icon: Database },
-    { id: 'SNAP', label: 'SNAP BI Gateway', status: 'Healthy', icon: Globe },
-    { id: 'BIFAST', label: 'BI-FAST Rail', status: 'Healthy', icon: Zap },
-    { id: 'RTGS', label: 'RTGS Settlement', status: 'Healthy', icon: RefreshCw },
-    { id: 'SDK', label: 'Resilient SDK v4', status: 'Active', icon: Cpu },
+const CredentialGuard = () => {
+  const [showSecret, setShowSecret] = useState(false);
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [keyInput, setKeyInput] = useState('');
+  const [validationResult, setValidationResult] = useState<any>(null);
+  const [ipInput, setIpInput] = useState('');
+  const [ipRisk, setIpRisk] = useState<any>(null);
+
+  const MOCK_CREDENTIALS = [
+    { id: 'CRED-001', partner: 'PT. ABC Corp', clientId: 'XYZ_ABC_001', status: 'ACTIVE', lastRotated: '2026-03-15', expiresIn: '89 days' },
+    { id: 'CRED-002', partner: 'DEF Payment Gateway', clientId: 'XYZ_DEF_041', status: 'ACTIVE', lastRotated: '2026-03-10', expiresIn: '84 days' },
+    { id: 'CRED-003', partner: 'Modalku Finance', clientId: 'XYZ_MDK_099', status: 'EXPIRING', lastRotated: '2025-12-20', expiresIn: '4 days' },
   ];
 
+  const handleValidateKey = () => {
+    const result = CredentialManager.validate_public_key(keyInput);
+    setValidationResult(result);
+    CredentialManager.log_security_audit(result.valid ? 'KEY_GEN' : 'VALIDATION_FAILURE', 'admin', 'DEMO_CIF');
+    setAuditLog(CredentialManager.get_audit_trail());
+  };
+
+  const handleCheckIp = () => {
+    const result = CredentialManager.analyze_ip_risk(ipInput);
+    setIpRisk(result);
+    CredentialManager.log_security_audit('IP_WHITELIST_ADD', 'admin', 'DEMO_CIF', { ip: ipInput, risk: result.risk_level });
+    setAuditLog(CredentialManager.get_audit_trail());
+  };
+
+  const handleRotateSecret = (credId: string) => {
+    CredentialManager.log_security_audit('KEY_GEN', 'admin', credId, { action: 'ROTATE', newExpiry: '90 days' });
+    setAuditLog(CredentialManager.get_audit_trail());
+  };
+
+  useEffect(() => {
+    setAuditLog(CredentialManager.get_audit_trail());
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {nodes.map(node => (
-        <div key={node.id} className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <div className="flex justify-between items-start mb-6">
-            <div className={`w-14 h-14 rounded-[24px] flex items-center justify-center transition-colors ${
-              node.status === 'Healthy' ? 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white'
-            }`}>
-              <node.icon size={28} />
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-              <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">{node.status}</span>
-            </div>
+    <div className="space-y-8">
+      {/* Credential Registry */}
+      <div className="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Key size={20} className="text-indigo-600" />
+            <h3 className="text-xl font-black text-slate-800 tracking-tight">SNAP BI Credential Registry</h3>
           </div>
-          <h4 className="text-xl font-black text-slate-800 tracking-tight mb-2">{node.label}</h4>
-          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{node.id} INFRASTRUCTURE NODE</p>
-          <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400">Uptime: 99.99%</span>
-            <ChevronRight size={16} className="text-slate-300 group-hover:text-slate-900 transition-colors" />
+          <span className="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-widest">HMAC-SHA512</span>
+        </div>
+        <table className="w-full text-sm">
+          <thead className="bg-slate-50 text-left">
+            <tr>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Partner Entity</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client ID</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Expires In</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {MOCK_CREDENTIALS.map(cred => (
+              <tr key={cred.id} className="hover:bg-slate-50 transition-colors">
+                <td className="px-8 py-6">
+                  <p className="font-black text-slate-800">{cred.partner}</p>
+                  <p className="text-[10px] font-mono text-slate-400">{cred.id}</p>
+                </td>
+                <td className="px-8 py-6 font-mono text-xs font-bold text-slate-700">{cred.clientId}</td>
+                <td className="px-8 py-6">
+                  <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase ${
+                    cred.status === 'EXPIRING' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                  }`}>{cred.expiresIn}</span>
+                </td>
+                <td className="px-8 py-6 text-right">
+                  <button onClick={() => handleRotateSecret(cred.id)} className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all">
+                    <RotateCcw size={14} className="inline mr-1" /> Rotate
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Key Validator */}
+        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+          <div className="flex items-center gap-3">
+            <Shield size={20} className="text-indigo-600" />
+            <h4 className="text-lg font-black text-slate-800">RSA Key Validator</h4>
+          </div>
+          <textarea 
+            value={keyInput} 
+            onChange={(e) => setKeyInput(e.target.value)}
+            placeholder="Paste RSA-2048 Public Key in PEM format..."
+            className="w-full h-32 bg-slate-50 border border-slate-100 rounded-2xl p-4 font-mono text-[10px] outline-none"
+          />
+          <button onClick={handleValidateKey} className="w-full py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
+            Validate Key Compliance
+          </button>
+          {validationResult && (
+            <div className={`p-4 rounded-2xl text-xs font-bold ${validationResult.valid ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+              {validationResult.valid ? `✓ Valid RSA-${validationResult.bits} Key` : `✗ ${validationResult.error}`}
+            </div>
+          )}
+        </div>
+
+        {/* IP Risk Analyzer */}
+        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+          <div className="flex items-center gap-3">
+            <Globe size={20} className="text-indigo-600" />
+            <h4 className="text-lg font-black text-slate-800">IP Risk Intelligence</h4>
+          </div>
+          <input 
+            value={ipInput} 
+            onChange={(e) => setIpInput(e.target.value)}
+            placeholder="Enter IP address to analyze..."
+            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none"
+          />
+          <button onClick={handleCheckIp} className="w-full py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
+            Analyze IP Threat Level
+          </button>
+          {ipRisk && (
+            <div className={`p-4 rounded-2xl border space-y-2 ${
+              ipRisk.risk_level === 'HIGH' ? 'bg-red-50 border-red-100' : ipRisk.risk_level === 'MEDIUM' ? 'bg-amber-50 border-amber-100' : 'bg-emerald-50 border-emerald-100'
+            }`}>
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                  ipRisk.risk_level === 'HIGH' ? 'bg-red-500 text-white' : ipRisk.risk_level === 'MEDIUM' ? 'bg-amber-500 text-white' : 'bg-emerald-500 text-white'
+                }`}>{ipRisk.risk_level}</span>
+                <span className="text-xs font-black text-slate-800">{ipInput}</span>
+              </div>
+              {ipRisk.reasons.map((r: string, i: number) => (
+                <p key={i} className="text-[10px] text-slate-600 font-bold">• {r}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Audit Trail */}
+      {auditLog.length > 0 && (
+        <div className="bg-slate-900 p-8 rounded-[40px] border border-slate-800 shadow-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <Fingerprint size={20} className="text-blue-400" />
+            <h4 className="text-sm font-black text-white uppercase tracking-widest">Security Audit Trail</h4>
+          </div>
+          <div className="space-y-2 font-mono text-[10px] max-h-48 overflow-y-auto custom-scrollbar">
+            {auditLog.map((entry, i) => (
+              <div key={i} className="flex items-center gap-4 text-slate-400 border-l-2 border-blue-500/20 pl-4 py-1">
+                <span className="text-slate-600">[{new Date(entry.timestamp).toLocaleTimeString()}]</span>
+                <span className={`px-1.5 py-0.5 rounded text-[8px] font-black ${
+                  entry.action_type === 'VALIDATION_FAILURE' ? 'bg-red-500 text-white' : 'bg-blue-500/20 text-blue-400'
+                }`}>{entry.action_type}</span>
+                <span className="text-slate-500">{entry.actor_username} → {entry.client_cif}</span>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
+      )}
+    </div>
+  );
+};
+
+// --- Sentinel Monitor Component ---
+
+const SentinelMonitor = () => {
+  const [nodes, setNodes] = useState([
+    { id: 'SNAP-GW-01', label: 'SNAP BI Gateway', status: 'HEALTHY', uptime: '99.99%', latency: '12ms', lastCheck: new Date().toISOString(), protocol: 'SNAP_BI' },
+    { id: 'CORE-JKT-01', label: 'Core Banking (JKT)', status: 'HEALTHY', uptime: '99.97%', latency: '8ms', lastCheck: new Date().toISOString(), protocol: 'ISO8583' },
+    { id: 'BIFAST-01', label: 'BI-FAST Rail', status: 'HEALTHY', uptime: '99.95%', latency: '45ms', lastCheck: new Date().toISOString(), protocol: 'SOCKET' },
+    { id: 'RTGS-01', label: 'RTGS Settlement', status: 'DEGRADED', uptime: '99.80%', latency: '120ms', lastCheck: new Date().toISOString(), protocol: 'SOCKET' },
+    { id: 'H2H-GW-01', label: 'H2H Partner Gateway', status: 'HEALTHY', uptime: '99.98%', latency: '18ms', lastCheck: new Date().toISOString(), protocol: 'SNAP_BI' },
+    { id: 'SDK-MESH-01', label: 'Resilient SDK Mesh', status: 'HEALTHY', uptime: '100.00%', latency: '2ms', lastCheck: new Date().toISOString(), protocol: 'SNAP_BI' },
+  ]);
+
+  const [alerts, setAlerts] = useState([
+    { id: 'ALT-001', severity: 'WARN', message: 'RTGS latency elevated above 100ms threshold', node: 'RTGS-01', timestamp: new Date(Date.now() - 300000).toISOString() },
+    { id: 'ALT-002', severity: 'INFO', message: 'Scheduled maintenance window for BIFAST-01 at 02:00 WIB', node: 'BIFAST-01', timestamp: new Date(Date.now() - 600000).toISOString() },
+    { id: 'ALT-003', severity: 'CRITICAL', message: 'Clock drift detected on SNAP-GW-01 (5.2s offset)', node: 'SNAP-GW-01', timestamp: new Date(Date.now() - 120000).toISOString(), resolved: true },
+  ]);
+
+  // Simulated heartbeat
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNodes(prev => prev.map(n => ({
+        ...n,
+        lastCheck: new Date().toISOString(),
+        latency: n.status === 'DEGRADED' 
+          ? `${100 + Math.floor(Math.random() * 50)}ms` 
+          : `${Math.floor(Math.random() * 30 + 5)}ms`
+      })));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="space-y-8">
+      {/* System Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {[
+          { label: 'Nodes Online', val: nodes.filter(n => n.status === 'HEALTHY').length + '/' + nodes.length, color: 'text-emerald-600', icon: Server },
+          { label: 'Avg Latency', val: Math.round(nodes.reduce((a, n) => a + parseInt(n.latency), 0) / nodes.length) + 'ms', color: 'text-blue-600', icon: Gauge },
+          { label: 'Active Alerts', val: alerts.filter(a => !('resolved' in a)).length.toString(), color: 'text-amber-600', icon: AlertTriangle },
+          { label: 'Uptime SLA', val: '99.95%', color: 'text-indigo-600', icon: Activity },
+        ].map((s, i) => (
+          <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
+            <s.icon size={20} className={`${s.color} mb-3`} />
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.label}</p>
+            <p className={`text-2xl font-black ${s.color}`}>{s.val}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Node Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {nodes.map(node => (
+          <div key={node.id} className={`bg-white p-8 rounded-[32px] border shadow-sm hover:shadow-lg transition-all group ${
+            node.status === 'DEGRADED' ? 'border-amber-200 bg-amber-50/30' : 'border-slate-200'
+          }`}>
+            <div className="flex justify-between items-start mb-6">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                node.status === 'HEALTHY' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+              }`}>
+                {node.status === 'HEALTHY' ? <Wifi size={24} /> : <WifiOff size={24} />}
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${node.status === 'HEALTHY' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500 animate-pulse'}`}></div>
+                <span className={`text-[9px] font-black uppercase tracking-widest ${node.status === 'HEALTHY' ? 'text-emerald-600' : 'text-amber-600'}`}>{node.status}</span>
+              </div>
+            </div>
+            <h4 className="text-lg font-black text-slate-800 tracking-tight mb-1">{node.label}</h4>
+            <p className="text-[10px] font-mono text-slate-400 mb-4">{node.id}</p>
+            <div className="space-y-2 pt-4 border-t border-slate-100">
+              <div className="flex justify-between text-[10px] font-bold">
+                <span className="text-slate-400 uppercase">Uptime</span>
+                <span className="text-slate-800">{node.uptime}</span>
+              </div>
+              <div className="flex justify-between text-[10px] font-bold">
+                <span className="text-slate-400 uppercase">Latency</span>
+                <span className={parseInt(node.latency) > 50 ? 'text-amber-600' : 'text-emerald-600'}>{node.latency}</span>
+              </div>
+              <div className="flex justify-between text-[10px] font-bold">
+                <span className="text-slate-400 uppercase">Protocol</span>
+                <span className="text-blue-600 font-mono">{node.protocol}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Alert Feed */}
+      <div className="bg-slate-900 p-8 rounded-[40px] border border-slate-800 shadow-2xl">
+        <div className="flex items-center gap-3 mb-6">
+          <ShieldAlert size={20} className="text-amber-400" />
+          <h4 className="text-sm font-black text-white uppercase tracking-widest">Alert Feed</h4>
+        </div>
+        <div className="space-y-3">
+          {alerts.map(alert => (
+            <div key={alert.id} className={`flex items-center gap-4 p-4 rounded-2xl border ${
+              'resolved' in alert ? 'bg-slate-800/50 border-slate-700/50 opacity-50' :
+              alert.severity === 'CRITICAL' ? 'bg-red-500/10 border-red-500/30' :
+              alert.severity === 'WARN' ? 'bg-amber-500/10 border-amber-500/30' :
+              'bg-blue-500/10 border-blue-500/30'
+            }`}>
+              <span className={`px-2 py-0.5 rounded text-[8px] font-black ${
+                alert.severity === 'CRITICAL' ? 'bg-red-500 text-white' :
+                alert.severity === 'WARN' ? 'bg-amber-500 text-white' : 'bg-blue-500 text-white'
+              }`}>{alert.severity}</span>
+              <span className="text-xs text-slate-300 font-bold flex-1">{alert.message}</span>
+              <span className="text-[10px] font-mono text-slate-500">{alert.node}</span>
+              {'resolved' in alert && <CheckCircle2 size={14} className="text-emerald-500" />}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
@@ -537,14 +752,30 @@ const FeatureExplorer = () => {
 // --- Main DevPortal Module ---
 
 export default function DevPortal() {
-  const [activeTab, setActiveTab] = useState<'AI' | 'SDK' | 'SANDBOX' | 'HEALER' | 'INFRA'>('SANDBOX');
+  const { tab } = useParams();
+  
+  const getInitialTab = () => {
+    if (tab === 'security') return 'CREDENTIAL';
+    if (tab === 'monitor') return 'SENTINEL';
+    if (tab === 'ai') return 'SANDBOX';
+    return 'SANDBOX';
+  };
+  
+  const [activeTab, setActiveTab] = useState<'AI' | 'SDK' | 'SANDBOX' | 'HEALER' | 'CREDENTIAL' | 'SENTINEL'>(getInitialTab() as any);
+
+  useEffect(() => {
+    if (tab === 'security') setActiveTab('CREDENTIAL');
+    else if (tab === 'monitor') setActiveTab('SENTINEL');
+    else if (tab === 'ai') setActiveTab('SANDBOX');
+  }, [tab]);
 
   const TABS = [
+    { id: 'SANDBOX', label: 'Simulation', icon: FlaskConical },
+    { id: 'SDK', label: 'Resilient SDK', icon: Cpu },
     { id: 'AI', label: 'AI Architect', icon: BrainCircuit },
-    { id: 'SDK', label: 'SDK Node', icon: Cpu },
-    { id: 'SANDBOX', label: 'Synthetic Sandbox', icon: FlaskConical },
     { id: 'HEALER', label: 'Payload Healer', icon: Stethoscope },
-    { id: 'INFRA', label: 'Infrastructure', icon: Network },
+    { id: 'CREDENTIAL', label: 'Credential Guard', icon: Key },
+    { id: 'SENTINEL', label: 'Sentinel Monitor', icon: Shield },
   ];
 
   return (
@@ -553,21 +784,19 @@ export default function DevPortal() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
              <div className="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Developer Ecosystem Active</div>
-             <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Zenith Control Plane v4.0</div>
           </div>
           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Developer Portal</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">High-fidelity simulation, AI-powered integration assistance, and resilient SDK orchestration for institutional banking partners.</p>
+          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">High-fidelity simulation, AI-powered integration assistance, and resilient SDK orchestration.</p>
         </div>
 
         <div className="flex bg-white p-2 rounded-[40px] border border-slate-200 shadow-xl overflow-x-auto no-scrollbar">
-          {TABS.map(tab => (
+          {TABS.map(t => (
             <button 
-              key={tab.id} 
-              onClick={() => setActiveTab(tab.id as any)} 
-              className={`flex items-center gap-3 px-8 py-5 rounded-[30px] text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-200' : 'text-slate-400 hover:text-slate-800'}`}
+              key={t.id} 
+              onClick={() => setActiveTab(t.id as any)} 
+              className={`flex items-center gap-2 px-6 py-4 rounded-[30px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === t.id ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-200' : 'text-slate-400 hover:text-slate-800'}`}
             >
-              <tab.icon size={18} />
-              {tab.label}
+              <t.icon size={16} />{t.label}
             </button>
           ))}
         </div>
@@ -578,7 +807,8 @@ export default function DevPortal() {
         {activeTab === 'SDK' && <SDKDemo />}
         {activeTab === 'SANDBOX' && <SyntheticSandbox />}
         {activeTab === 'HEALER' && <PayloadHealerUI />}
-        {activeTab === 'INFRA' && <FeatureExplorer />}
+        {activeTab === 'CREDENTIAL' && <CredentialGuard />}
+        {activeTab === 'SENTINEL' && <SentinelMonitor />}
       </div>
     </div>
   );
