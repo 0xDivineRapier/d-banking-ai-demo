@@ -259,6 +259,9 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
       </div>
 
       <div className="flex items-center gap-2">
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+
         {/* Search */}
         <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 hover:bg-muted text-muted-foreground text-[11px] transition-colors border border-border/50" data-tour="search">
           <Search size={13} />
