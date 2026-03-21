@@ -1,5 +1,5 @@
 
-import { GoogleGenAI } from "@google/genai";
+
 
 export interface BankTransaction {
   trx_id: string;
