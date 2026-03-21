@@ -7,23 +7,18 @@ import {
   Zap, 
   Search, 
   MessageSquare, 
-  Cpu, 
   Clock, 
   AlertTriangle,
   RefreshCw,
   Terminal,
-  Server,
+  Network,
   Bell,
   CheckCircle2,
-  ChevronRight,
-  TrendingDown,
-  Info,
-  Network,
   Ghost,
-  Database,
   ArrowUpRight,
   ShieldX,
-  X
+  X,
+  Check
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -47,13 +42,19 @@ export default function OpsDeskModule() {
   const [isQuerying, setIsQuerying] = useState(false);
   const [prediction, setPrediction] = useState<LimitPrediction | null>(null);
   const [quotaExceeded, setQuotaExceeded] = useState(false);
+  const [limitOverrideApplied, setLimitOverrideApplied] = useState(false);
+  const [notifications, setNotifications] = useState<{id: string; text: string; time: string; read: boolean}[]>([
+    { id: '1', text: 'SNAP Gateway latency spike detected on JKT-02', time: '2 min ago', read: false },
+    { id: '2', text: 'Fintech Rail limit reaching 78% utilization', time: '5 min ago', read: false },
+    { id: '3', text: 'Scheduled maintenance: BI-FAST node at 02:00 WIB', time: '15 min ago', read: true },
+  ]);
+  const [showNotifications, setShowNotifications] = useState(false);
   
   const monitorAgent = useRef(new LogMonitorAgent());
   const reportAgent = useRef(new ReportingAgent());
   const limitAgent = useRef(new LimitAgent());
   const engine = useRef(new SimulationEngine());
 
-  // Real-time log simulation - Increased interval to 10s to conserve quota
   useEffect(() => {
     const interval = setInterval(async () => {
       const newLogs = await engine.current.generateSystemLogs(1, Math.random() > 0.95);
@@ -66,6 +67,7 @@ export default function OpsDeskModule() {
           } else {
             setQuotaExceeded(false);
             setDiagnosis(diag);
+            setNotifications(prev => [{ id: Date.now().toString(), text: `CRITICAL: ${diag.diagnosis.root_cause_hypothesis}`, time: 'Just now', read: false }, ...prev]);
           }
         } catch (err) {
           console.error("Diagnosis error", err);
@@ -75,7 +77,6 @@ export default function OpsDeskModule() {
     return () => clearInterval(interval);
   }, []);
 
-  // Predictive Limit Analysis
   const volumeData = useMemo<VolumeStat[]>(() => {
     return Array.from({ length: 24 }, (_, i) => ({
       time: `${i}:00`,
@@ -86,9 +87,7 @@ export default function OpsDeskModule() {
   useEffect(() => {
     const runPrediction = async () => {
       const res = await limitAgent.current.predictBreach(volumeData, 100);
-      if (res.risk_level === 'OVERLOAD') {
-        setQuotaExceeded(true);
-      }
+      if (res.risk_level === 'OVERLOAD') setQuotaExceeded(true);
       setPrediction(res);
     };
     runPrediction();
@@ -109,6 +108,20 @@ export default function OpsDeskModule() {
     }
   };
 
+  const handleApplyLimitOverride = () => {
+    setLimitOverrideApplied(true);
+    setNotifications(prev => [{ id: Date.now().toString(), text: 'Limit Override applied: +15B IDR for Fintech-Rail-01', time: 'Just now', read: false }, ...prev]);
+    setTimeout(() => {
+      setPrediction(prev => prev ? { ...prev, risk_level: 'LOW', recommendation: 'Override applied. Rails stable with additional 15B IDR headroom.', projected_breach_time: null } : prev);
+    }, 500);
+  };
+
+  const markAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
       {quotaExceeded && (
@@ -117,7 +130,7 @@ export default function OpsDeskModule() {
               <ShieldX size={20} />
               <div className="text-xs font-bold">
                  <p className="uppercase tracking-widest font-black">AI Service Quota Exceeded</p>
-                 <p className="opacity-80">Real-time proactive diagnostics are temporarily running in fallback mode. Deep analysis will resume shortly.</p>
+                 <p className="opacity-80">Real-time proactive diagnostics are temporarily running in fallback mode.</p>
               </div>
            </div>
            <button onClick={() => setQuotaExceeded(false)} className="text-white/50 hover:text-white"><X size={18} /></button>
@@ -133,6 +146,39 @@ export default function OpsDeskModule() {
            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
               <span className="text-[10px] font-black uppercase tracking-widest">Gateway Healthy</span>
+           </div>
+           {/* Notification Bell */}
+           <div className="relative">
+             <button 
+               onClick={() => setShowNotifications(!showNotifications)}
+               className="relative w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
+             >
+               <Bell size={18} className="text-slate-600" />
+               {unreadCount > 0 && (
+                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">
+                   {unreadCount}
+                 </span>
+               )}
+             </button>
+             {showNotifications && (
+               <div className="absolute right-0 top-12 w-96 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200">
+                 <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                   <h4 className="text-sm font-black text-slate-800">Notifications</h4>
+                   <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Mark All Read</button>
+                 </div>
+                 <div className="max-h-80 overflow-y-auto">
+                   {notifications.map(n => (
+                     <div key={n.id} className={`p-4 border-b border-slate-50 flex items-start gap-3 ${!n.read ? 'bg-blue-50/50' : ''}`}>
+                       <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
+                       <div>
+                         <p className="text-xs font-bold text-slate-700">{n.text}</p>
+                         <p className="text-[10px] text-slate-400 mt-1">{n.time}</p>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             )}
            </div>
            <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl shadow-lg">
               <Network size={14} className="text-blue-400" />
@@ -150,11 +196,14 @@ export default function OpsDeskModule() {
                  <TrendingUp size={20} className="text-blue-600" />
                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Predictive Capacity Monitor</h3>
               </div>
-              {prediction?.projected_breach_time && (
-                <div className={`text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 ${
-                  prediction.risk_level === 'CRITICAL' || prediction.risk_level === 'HIGH' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
-                }`}>
+              {prediction?.projected_breach_time && !limitOverrideApplied && (
+                <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-red-50 text-red-600">
                    <AlertTriangle size={12} /> Limit Breach Projected: {prediction.projected_breach_time} WIB
+                </div>
+              )}
+              {limitOverrideApplied && (
+                <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-emerald-50 text-emerald-600">
+                   <CheckCircle2 size={12} /> Override Active
                 </div>
               )}
             </div>
@@ -173,7 +222,6 @@ export default function OpsDeskModule() {
                   <YAxis hide domain={[0, 100]} />
                   <Tooltip />
                   <Area type="monotone" dataKey="volume" stroke="#3B82F6" fillOpacity={1} fill="url(#colorVol)" strokeWidth={3} />
-                  <Area type="monotone" dataKey="limit" stroke="#EF4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -182,8 +230,18 @@ export default function OpsDeskModule() {
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI Recommendation</p>
                   <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || "Analyzing traffic patterns..."}</p>
                </div>
-               <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
-                  Apply Limit Override
+               <button 
+                 onClick={handleApplyLimitOverride}
+                 disabled={limitOverrideApplied}
+                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                   limitOverrideApplied 
+                     ? 'bg-emerald-100 text-emerald-700 cursor-default' 
+                     : 'bg-slate-900 text-white hover:bg-slate-800'
+                 }`}
+               >
+                  {limitOverrideApplied ? (
+                    <span className="flex items-center gap-2"><Check size={14} /> Override Applied</span>
+                  ) : 'Apply Limit Override'}
                </button>
             </div>
           </div>
