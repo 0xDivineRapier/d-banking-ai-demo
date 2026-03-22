@@ -787,8 +787,8 @@ export default function DevPortal() {
           <div className="flex items-center gap-3">
               <div className="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">{t('dev.ecosystem')}</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Developer Portal</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">High-fidelity simulation, AI-powered integration assistance, and resilient SDK orchestration.</p>
+           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('dev.title')}</h1>
+           <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">{t('dev.subtitle')}</p>
         </div>
 
         <div className="flex bg-white p-2 rounded-[40px] border border-slate-200 shadow-xl overflow-x-auto no-scrollbar">
