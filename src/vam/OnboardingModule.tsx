@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useI18n } from './i18n';
 import { 
   Users, 
   FileText, 

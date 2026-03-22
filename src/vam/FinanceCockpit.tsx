@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useI18n } from './i18n';
 import { useSearchParams } from 'react-router-dom';
 import { 
   ShieldAlert, 

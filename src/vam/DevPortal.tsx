@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useI18n } from './i18n';
 import { useParams } from 'react-router-dom';
 import { 
   Zap, 
