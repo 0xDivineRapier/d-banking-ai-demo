@@ -200,7 +200,7 @@ export default function OpsDeskModule() {
               </div>
               {prediction?.projected_breach_time && !limitOverrideApplied && (
                 <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-red-50 text-red-600">
-                   <AlertTriangle size={12} /> Limit Breach Projected: {prediction.projected_breach_time} WIB
+                   <AlertTriangle size={12} /> {t('ops.limit_breach')}: {prediction.projected_breach_time} WIB
                 </div>
               )}
               {limitOverrideApplied && (
