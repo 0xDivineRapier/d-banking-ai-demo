@@ -178,6 +178,9 @@ function SidebarNavItem({ item, collapsed }: { item: any; collapsed: boolean }) 
 
 // --- Sidebar ---
 function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+  const { t } = useI18n();
+  const NAV_ITEMS = useMemo(() => getNavItems(t), [t]);
+
   return (
     <aside
       data-tour="sidebar"
@@ -194,7 +197,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           {!collapsed && (
             <div className="overflow-hidden animate-slide-in">
               <p className="text-[13px] font-bold text-white tracking-tight leading-none">Zenith VAM</p>
-              <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">CONTROL PLANE v4.8</p>
+              <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">{t('sidebar.control_plane')}</p>
             </div>
           )}
         </div>
@@ -203,7 +206,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       {/* Section label */}
       {!collapsed && (
         <div className="px-6 mb-2">
-          <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-sidebar-foreground/25">Navigation</span>
+          <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-sidebar-foreground/25">{t('nav.navigation')}</span>
         </div>
       )}
 
