@@ -98,6 +98,7 @@ const INITIAL_APPLICATIONS: OnboardingApplication[] = [
 ];
 
 export default function OnboardingModule() {
+  const { t } = useI18n();
   const [activeView, setActiveView] = useState<'LIST' | 'WIZARD' | 'MANAGE'>('LIST');
   const [selectedMerchantId, setSelectedMerchantId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
