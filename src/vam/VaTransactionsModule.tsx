@@ -464,14 +464,15 @@ const ExceptionTab = () => {
 // --- Main Module ---
 
 export default function VaTransactionsModule() {
+  const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'inquiry';
 
   const TABS = [
-    { id: 'inquiry', label: 'Inquiry', icon: Search },
-    { id: 'transactions', label: 'All Transactions', icon: List },
-    { id: 'batch', label: 'Batch Processing', icon: Layers },
-    { id: 'exceptions', label: 'Exception Manager', icon: ShieldAlert },
+    { id: 'inquiry', label: t('tx.inquiry'), icon: Search },
+    { id: 'transactions', label: t('tx.all'), icon: List },
+    { id: 'batch', label: t('tx.batch'), icon: Layers },
+    { id: 'exceptions', label: t('tx.exceptions'), icon: ShieldAlert },
   ];
 
   return (
