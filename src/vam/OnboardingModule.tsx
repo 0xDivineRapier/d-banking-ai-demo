@@ -288,7 +288,7 @@ export default function OnboardingModule() {
           onClick={startNewOnboarding}
           className="px-8 py-5 bg-blue-600 text-white rounded-[24px] text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-blue-100 hover:scale-105 transition-all flex items-center gap-3"
         >
-          <Plus size={20} /> New Merchant & VA Pool
+           <Plus size={20} /> {t('onb.new_merchant')}
         </button>
       </div>
 
