@@ -744,7 +744,7 @@ export default function FinanceCockpit() {
               <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('fin.liquidity_hub')}</div>
           </div>
           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('fin.title')}</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">Real-time liquidity stress forecasting and automated AI bank-to-ERP reconciliation.</p>
+          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">{t('fin.subtitle')}</p>
         </div>
       </div>
       
