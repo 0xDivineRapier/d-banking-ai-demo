@@ -524,8 +524,8 @@ export default function OnboardingModule() {
                       <button onClick={() => setIsAiPanelOpen(!isAiPanelOpen)} className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 transition-all ${isAiPanelOpen ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
                          <BrainCircuit size={16} /> <span className="text-[10px] font-black uppercase tracking-widest">Copilot</span>
                       </button>
-                      <button onClick={() => { alert('Application Submitted'); setActiveView('LIST'); }} className="px-8 py-2.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center gap-2">
-                         Finalize & Provision <Zap size={16} />
+                       <button onClick={() => { alert('Application Submitted'); setActiveView('LIST'); }} className="px-8 py-2.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center gap-2">
+                          {t('onb.submit')} <Zap size={16} />
                       </button>
                    </div>
                 </div>
