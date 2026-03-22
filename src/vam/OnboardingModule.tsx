@@ -282,8 +282,8 @@ export default function OnboardingModule() {
              <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black uppercase tracking-widest">Master Registry</div>
              <span className="text-[10px] font-bold text-slate-400">Node: XYZ-REG-01</span>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter">Client List</h1>
-          <p className="text-xl text-slate-500 font-medium max-w-xl">Unified lifecycle management for institutional partners. Onboard, configure VA rails, and manage credentials in one plane.</p>
+           <h1 className="text-6xl font-black text-slate-800 tracking-tighter">{t('onb.title')}</h1>
+           <p className="text-xl text-slate-500 font-medium max-w-xl">{t('onb.subtitle')}</p>
         </div>
         <button 
           onClick={startNewOnboarding}
