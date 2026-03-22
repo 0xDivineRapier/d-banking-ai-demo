@@ -279,8 +279,7 @@ export default function OnboardingModule() {
       <div className="flex justify-between items-end">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-             <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black uppercase tracking-widest">Master Registry</div>
-             <span className="text-[10px] font-bold text-slate-400">Node: XYZ-REG-01</span>
+              <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black uppercase tracking-widest">{t('onb.master_registry')}</div>
           </div>
            <h1 className="text-6xl font-black text-slate-800 tracking-tighter">{t('onb.title')}</h1>
            <p className="text-xl text-slate-500 font-medium max-w-xl">{t('onb.subtitle')}</p>
