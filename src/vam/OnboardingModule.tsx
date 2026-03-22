@@ -301,7 +301,7 @@ export default function OnboardingModule() {
                    type="text" 
                    value={searchTerm}
                    onChange={(e) => setSearchTerm(e.target.value)}
-                   placeholder="Search registry..."
+                   placeholder={t('onb.search')}
                    className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-blue-500 w-64"
                  />
               </div>
