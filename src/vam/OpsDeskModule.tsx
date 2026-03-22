@@ -131,8 +131,8 @@ export default function OpsDeskModule() {
            <div className="flex items-center gap-3">
               <ShieldX size={20} />
               <div className="text-xs font-bold">
-                 <p className="uppercase tracking-widest font-black">AI Service Quota Exceeded</p>
-                 <p className="opacity-80">Real-time proactive diagnostics are temporarily running in fallback mode.</p>
+               <p className="uppercase tracking-widest font-black">{t('ops.quota_exceeded')}</p>
+                  <p className="opacity-80">{t('ops.quota_fallback')}</p>
               </div>
            </div>
            <button onClick={() => setQuotaExceeded(false)} className="text-white/50 hover:text-white"><X size={18} /></button>
