@@ -743,7 +743,7 @@ export default function FinanceCockpit() {
              <div className="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Treasury Node Active</div>
              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bank XYZ Liquidity Hub</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Finance Cockpit</h1>
+          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('fin.title')}</h1>
           <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">Real-time liquidity stress forecasting and automated AI bank-to-ERP reconciliation.</p>
         </div>
       </div>
