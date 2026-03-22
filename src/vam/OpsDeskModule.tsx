@@ -330,7 +330,7 @@ export default function OpsDeskModule() {
                 ) : (
                    <div className="h-full flex flex-col items-center justify-center opacity-20 text-center">
                       <Ghost size={48} className="mb-4" />
-                      <p className="text-[10px] font-black uppercase tracking-widest">Awaiting Command...<br/>Translate natural language to SQL instantly.</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest">{t('ops.awaiting_command')}<br/>{t('ops.translate_nlp')}</p>
                    </div>
                 )}
              </div>
