@@ -242,6 +242,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
 
 // --- Header ---
 function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void; onStartTour: () => void }) {
+  const { t } = useI18n();
   return (
     <header className="h-14 bg-card border-b border-border/60 flex items-center justify-between px-4 shrink-0 z-50" data-tour="header">
       <div className="flex items-center gap-2">
@@ -257,7 +258,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         <div className="hidden md:flex items-center gap-1.5 ml-2">
           <span className="text-[11px] font-semibold text-muted-foreground/60">Bank XYZ</span>
           <ChevronRight size={12} className="text-muted-foreground/30" />
-          <span className="text-[11px] font-semibold text-foreground">Control Plane</span>
+          <span className="text-[11px] font-semibold text-foreground">{t('header.control_plane')}</span>
         </div>
       </div>
 
@@ -268,7 +269,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         {/* Search */}
         <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 hover:bg-muted text-muted-foreground text-[11px] transition-colors border border-border/50" data-tour="search">
           <Search size={13} />
-          <span>Search...</span>
+          <span>{t('header.search')}</span>
           <kbd className="ml-4 px-1.5 py-0.5 rounded bg-card border border-border text-[9px] font-mono">⌘K</kbd>
         </button>
 
@@ -278,7 +279,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         {/* Status pill */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20" data-tour="status-pill">
           <div className="status-dot-healthy" />
-          <span className="text-[10px] font-semibold text-accent font-mono">ALL SYSTEMS NOMINAL</span>
+          <span className="text-[10px] font-semibold text-accent font-mono">{t('header.all_systems')}</span>
         </div>
 
         {/* Notifications */}
@@ -293,8 +294,8 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
             A
           </div>
           <div className="hidden sm:block">
-            <p className="text-[11px] font-semibold text-foreground leading-none">Admin</p>
-            <p className="text-[9px] text-muted-foreground font-mono mt-0.5">Level 4</p>
+            <p className="text-[11px] font-semibold text-foreground leading-none">{t('header.admin')}</p>
+            <p className="text-[9px] text-muted-foreground font-mono mt-0.5">{t('header.level')} 4</p>
           </div>
         </div>
       </div>
