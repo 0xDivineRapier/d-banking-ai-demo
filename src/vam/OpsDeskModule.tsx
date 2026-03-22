@@ -268,7 +268,7 @@ export default function OpsDeskModule() {
                     <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs">
                        <ShieldAlert size={14} /> {t('ops.ai_analysis')}: {diagnosis.diagnosis.classification} {t('ops.issue_detected')}
                     </div>
-                    <p className="text-xs opacity-80 leading-relaxed font-bold">Root Cause Hypothesis: {diagnosis.diagnosis.root_cause_hypothesis}</p>
+                    <p className="text-xs opacity-80 leading-relaxed font-bold">{t('ops.root_cause')}: {diagnosis.diagnosis.root_cause_hypothesis}</p>
                   </div>
                 )}
                 {logs.map((log, i) => (
