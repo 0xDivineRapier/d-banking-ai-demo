@@ -229,8 +229,8 @@ export default function OpsDeskModule() {
             </div>
             <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI Recommendation</p>
-                  <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || "Analyzing traffic patterns..."}</p>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ops.ai_recommendation')}</p>
+                   <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || t('ops.analyzing')}</p>
                </div>
                <button 
                  onClick={handleApplyLimitOverride}
