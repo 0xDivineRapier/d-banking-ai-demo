@@ -266,7 +266,7 @@ export default function OpsDeskModule() {
                     diagnosis.diagnosis.classification === 'Systemic' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
                   }`}>
                     <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs">
-                       <ShieldAlert size={14} /> AI Analysis: {diagnosis.diagnosis.classification} Issue Detected
+                       <ShieldAlert size={14} /> {t('ops.ai_analysis')}: {diagnosis.diagnosis.classification} {t('ops.issue_detected')}
                     </div>
                     <p className="text-xs opacity-80 leading-relaxed font-bold">Root Cause Hypothesis: {diagnosis.diagnosis.root_cause_hypothesis}</p>
                   </div>
