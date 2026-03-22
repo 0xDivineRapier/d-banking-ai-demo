@@ -196,7 +196,7 @@ export default function OpsDeskModule() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <TrendingUp size={20} className="text-blue-600" />
-                 <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Predictive Capacity Monitor</h3>
+                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">{t('ops.predictive_monitor')}</h3>
               </div>
               {prediction?.projected_breach_time && !limitOverrideApplied && (
                 <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-red-50 text-red-600">
