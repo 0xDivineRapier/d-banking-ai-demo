@@ -482,8 +482,8 @@ export default function VaTransactionsModule() {
           <div className="flex items-center gap-3">
              <div className="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Live Rails Active</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Transactions</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium">Real-time VA inquiry, transaction ledger, batch processing, and exception resolution.</p>
+           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('tx.title')}</h1>
+           <p className="text-slate-500 text-xl max-w-2xl font-medium">{t('tx.subtitle')}</p>
         </div>
 
         <div className="flex bg-white p-2 rounded-[40px] border border-slate-200 shadow-xl overflow-x-auto no-scrollbar">
