@@ -147,7 +147,7 @@ export default function OpsDeskModule() {
         <div className="flex items-center gap-3">
            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="text-[10px] font-black uppercase tracking-widest">Gateway Healthy</span>
+               <span className="text-[10px] font-black uppercase tracking-widest">{t('ops.gateway_healthy')}</span>
            </div>
            {/* Notification Bell */}
            <div className="relative">
