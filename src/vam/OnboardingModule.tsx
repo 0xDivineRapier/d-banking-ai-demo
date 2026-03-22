@@ -310,10 +310,10 @@ export default function OnboardingModule() {
         <table className="w-full text-sm">
            <thead className="bg-slate-50 text-left">
               <tr>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Partner Entity</th>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">VA Prefix</th>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Risk Index</th>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('onb.partner_entity')}</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('onb.va_prefix')}</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('onb.risk_index')}</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('common.status')}</th>
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
