@@ -252,7 +252,7 @@ export default function OpsDeskModule() {
              <div className="p-6 bg-slate-900/50 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3 text-blue-400">
                    <Terminal size={18} />
-                   <h3 className="text-[11px] font-black uppercase tracking-widest font-mono">Bank XYZ Sentinel AI Diagnostic Feed</h3>
+                   <h3 className="text-[11px] font-black uppercase tracking-widest font-mono">{t('ops.diagnostic_feed')}</h3>
                 </div>
                 <div className="flex items-center gap-1.5">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
