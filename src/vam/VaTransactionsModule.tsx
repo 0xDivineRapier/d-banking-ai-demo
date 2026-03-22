@@ -414,7 +414,7 @@ const ExceptionTab = () => {
            }`}
          >
             {resolving ? <RefreshCw size={16} className="animate-spin" /> : exceptions.every(e => e.resolved) ? <Check size={16} /> : <Zap size={16} />}
-            {exceptions.every(e => e.resolved) ? 'All Resolved' : 'Resolve All Automagically'}
+            {exceptions.every(e => e.resolved) ? 'All Resolved' : t('tx.resolve_all')}
          </button>
       </div>
 
