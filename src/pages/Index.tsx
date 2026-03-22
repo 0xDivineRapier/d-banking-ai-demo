@@ -223,11 +223,11 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           <div className="px-2 space-y-2">
             <div className="flex items-center gap-2">
               <div className="status-dot-healthy" />
-              <span className="text-[10px] font-mono text-sidebar-foreground/50">CORE_ENGINE: ACTIVE</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Shield size={12} className="text-sidebar-foreground/30" />
-              <span className="text-[10px] font-mono text-sidebar-foreground/35">SEC_LVL: 4 • H2H_ACTIVE</span>
+               <span className="text-[10px] font-mono text-sidebar-foreground/50">{t('sidebar.core_engine')}</span>
+             </div>
+             <div className="flex items-center gap-2">
+               <Shield size={12} className="text-sidebar-foreground/30" />
+               <span className="text-[10px] font-mono text-sidebar-foreground/35">{t('sidebar.sec_lvl')}</span>
             </div>
           </div>
         ) : (
