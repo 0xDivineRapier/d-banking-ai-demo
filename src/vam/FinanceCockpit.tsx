@@ -671,6 +671,7 @@ const FinanceIntelligenceBot = ({
 // --- Main FinanceCockpit Wrapper ---
 
 export default function FinanceCockpit() {
+  const { t } = useI18n();
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'heatmap';
   const heatmapData = useMemo(() => generateHeatmapData(), []);
