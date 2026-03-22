@@ -256,7 +256,7 @@ export default function OpsDeskModule() {
                 </div>
                 <div className="flex items-center gap-1.5">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                   <span className="text-[9px] font-mono text-emerald-500 uppercase">Live Trace</span>
+                   <span className="text-[9px] font-mono text-emerald-500 uppercase">{t('ops.live_trace')}</span>
                 </div>
              </div>
              
