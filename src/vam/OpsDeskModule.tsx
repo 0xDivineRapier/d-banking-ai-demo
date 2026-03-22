@@ -288,7 +288,7 @@ export default function OpsDeskModule() {
           <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm flex flex-col h-[520px]">
              <div className="flex items-center gap-3 mb-6">
                 <MessageSquare size={24} className="text-blue-600" />
-                <h3 className="text-lg font-black text-slate-800 tracking-tight">Support Copilot</h3>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">{t('ops.support_copilot')}</h3>
              </div>
              <div className="relative mb-6">
                 <input 
