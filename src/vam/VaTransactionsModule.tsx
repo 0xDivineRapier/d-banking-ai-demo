@@ -402,7 +402,7 @@ const ExceptionTab = () => {
          <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-white rounded-[28px] flex items-center justify-center text-amber-500 shadow-sm"><ShieldAlert size={32} /></div>
             <div>
-               <h3 className="text-2xl font-black text-amber-900 tracking-tight">Exception Management</h3>
+               <h3 className="text-2xl font-black text-amber-900 tracking-tight">{t('tx.exception_mgmt')}</h3>
                <p className="text-amber-700 font-medium">Sentinel flagged {exceptions.filter(e => !e.resolved).length} anomalies requiring appropriation.</p>
             </div>
          </div>
