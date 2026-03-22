@@ -28,38 +28,38 @@ import OpsDeskModule from '@/vam/OpsDeskModule';
 import VaTransactionsModule from '@/vam/VaTransactionsModule';
 import { ProductTour, TourTriggerButton, TourStep } from '@/components/ProductTour';
 
-// --- Navigation Data ---
-const NAV_ITEMS = [
-  { label: 'Operations', icon: Activity, to: '/admin', description: 'Monitoring & Diagnostics', tourId: 'nav-operations' },
-  { label: 'Onboarding', icon: Users, to: '/config', description: 'Merchant Registry', tourId: 'nav-onboarding' },
+// --- Navigation Data (uses translation keys) ---
+const getNavItems = (t: (key: string) => string) => [
+  { label: t('nav.operations'), icon: Activity, to: '/admin', description: t('nav.monitoring'), tourId: 'nav-operations' },
+  { label: t('nav.onboarding'), icon: Users, to: '/config', description: t('nav.merchant_registry'), tourId: 'nav-onboarding' },
   { 
-    label: 'Transactions', icon: CreditCard,
-    description: 'VA & Payment Rails',
+    label: t('nav.transactions'), icon: CreditCard,
+    description: t('nav.va_payment'),
     tourId: 'nav-transactions',
     subItems: [
-      { label: 'Real-time Inquiry', to: '/va/inquiry?tab=inquiry' },
-      { label: 'Batch Processing', to: '/va/inquiry?tab=batch' },
-      { label: 'Exception Manager', to: '/va/inquiry?tab=exceptions' },
+      { label: t('nav.realtime_inquiry'), to: '/va/inquiry?tab=inquiry' },
+      { label: t('nav.batch_processing'), to: '/va/inquiry?tab=batch' },
+      { label: t('nav.exception_manager'), to: '/va/inquiry?tab=exceptions' },
     ]
   },
   { 
-    label: 'Treasury', icon: Layout,
-    description: 'Liquidity & Recon',
+    label: t('nav.treasury'), icon: Layout,
+    description: t('nav.liquidity'),
     tourId: 'nav-treasury',
     subItems: [
-      { label: 'Liquidity Heatmap', to: '/finance/cockpit?tab=heatmap' },
-      { label: 'ERP Reconciliation', to: '/finance/cockpit?tab=reconciliation' },
-      { label: 'OJK Reporting', to: '/va/ojk' },
+      { label: t('nav.liquidity_heatmap'), to: '/finance/cockpit?tab=heatmap' },
+      { label: t('nav.erp_reconciliation'), to: '/finance/cockpit?tab=reconciliation' },
+      { label: t('nav.ojk_reporting'), to: '/va/ojk' },
     ]
   },
   { 
-    label: 'Middleware', icon: Terminal,
-    description: 'SNAP BI & Security',
+    label: t('nav.middleware'), icon: Terminal,
+    description: t('nav.snap_security'),
     tourId: 'nav-middleware',
     subItems: [
-      { label: 'SNAP BI Tools', to: '/dev/ai' },
-      { label: 'Credential Guard', to: '/dev/security' },
-      { label: 'Sentinel Monitor', to: '/dev/monitor' },
+      { label: t('nav.snap_tools'), to: '/dev/ai' },
+      { label: t('nav.credential_guard'), to: '/dev/security' },
+      { label: t('nav.sentinel_monitor'), to: '/dev/monitor' },
     ]
   },
 ];
