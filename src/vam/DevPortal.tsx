@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useI18n } from './i18n';
 import { useParams } from 'react-router-dom';
 import { 
   Zap, 
@@ -752,6 +753,7 @@ const SentinelMonitor = () => {
 // --- Main DevPortal Module ---
 
 export default function DevPortal() {
+  const { t } = useI18n();
   const { tab } = useParams();
   
   const getInitialTab = () => {
@@ -770,12 +772,12 @@ export default function DevPortal() {
   }, [tab]);
 
   const TABS = [
-    { id: 'SANDBOX', label: 'Simulation', icon: FlaskConical },
-    { id: 'SDK', label: 'Resilient SDK', icon: Cpu },
-    { id: 'AI', label: 'AI Architect', icon: BrainCircuit },
-    { id: 'HEALER', label: 'Payload Healer', icon: Stethoscope },
-    { id: 'CREDENTIAL', label: 'Credential Guard', icon: Key },
-    { id: 'SENTINEL', label: 'Sentinel Monitor', icon: Shield },
+    { id: 'SANDBOX', label: t('dev.simulation'), icon: FlaskConical },
+    { id: 'SDK', label: t('dev.sdk'), icon: Cpu },
+    { id: 'AI', label: t('dev.architect'), icon: BrainCircuit },
+    { id: 'HEALER', label: t('dev.healer'), icon: Stethoscope },
+    { id: 'CREDENTIAL', label: t('dev.credential'), icon: Key },
+    { id: 'SENTINEL', label: t('dev.sentinel'), icon: Shield },
   ];
 
   return (
@@ -783,10 +785,10 @@ export default function DevPortal() {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-             <div className="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Developer Ecosystem Active</div>
+              <div className="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">{t('dev.ecosystem')}</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Developer Portal</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">High-fidelity simulation, AI-powered integration assistance, and resilient SDK orchestration.</p>
+           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('dev.title')}</h1>
+           <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">{t('dev.subtitle')}</p>
         </div>
 
         <div className="flex bg-white p-2 rounded-[40px] border border-slate-200 shadow-xl overflow-x-auto no-scrollbar">

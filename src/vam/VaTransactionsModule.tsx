@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
+import { useI18n } from './i18n';
 import { useSearchParams } from 'react-router-dom';
 import { 
   Search, 
@@ -380,6 +381,7 @@ const BatchTab = () => {
 };
 
 const ExceptionTab = () => {
+  const { t } = useI18n();
   const [exceptions, setExceptions] = useState(EXCEPTIONS.map(e => ({ ...e, resolved: false })));
   const [resolving, setResolving] = useState(false);
 
@@ -401,7 +403,7 @@ const ExceptionTab = () => {
          <div className="flex items-center gap-6">
             <div className="w-16 h-16 bg-white rounded-[28px] flex items-center justify-center text-amber-500 shadow-sm"><ShieldAlert size={32} /></div>
             <div>
-               <h3 className="text-2xl font-black text-amber-900 tracking-tight">Exception Management</h3>
+               <h3 className="text-2xl font-black text-amber-900 tracking-tight">{t('tx.exception_mgmt')}</h3>
                <p className="text-amber-700 font-medium">Sentinel flagged {exceptions.filter(e => !e.resolved).length} anomalies requiring appropriation.</p>
             </div>
          </div>
@@ -413,7 +415,7 @@ const ExceptionTab = () => {
            }`}
          >
             {resolving ? <RefreshCw size={16} className="animate-spin" /> : exceptions.every(e => e.resolved) ? <Check size={16} /> : <Zap size={16} />}
-            {exceptions.every(e => e.resolved) ? 'All Resolved' : 'Resolve All Automagically'}
+            {exceptions.every(e => e.resolved) ? 'All Resolved' : t('tx.resolve_all')}
          </button>
       </div>
 
@@ -463,14 +465,15 @@ const ExceptionTab = () => {
 // --- Main Module ---
 
 export default function VaTransactionsModule() {
+  const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'inquiry';
 
   const TABS = [
-    { id: 'inquiry', label: 'Inquiry', icon: Search },
-    { id: 'transactions', label: 'All Transactions', icon: List },
-    { id: 'batch', label: 'Batch Processing', icon: Layers },
-    { id: 'exceptions', label: 'Exception Manager', icon: ShieldAlert },
+    { id: 'inquiry', label: t('tx.inquiry'), icon: Search },
+    { id: 'transactions', label: t('tx.all'), icon: List },
+    { id: 'batch', label: t('tx.batch'), icon: Layers },
+    { id: 'exceptions', label: t('tx.exceptions'), icon: ShieldAlert },
   ];
 
   return (
@@ -478,10 +481,10 @@ export default function VaTransactionsModule() {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-             <div className="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Live Rails Active</div>
+             <div className="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">{t('tx.live_rails')}</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Transactions</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium">Real-time VA inquiry, transaction ledger, batch processing, and exception resolution.</p>
+           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('tx.title')}</h1>
+           <p className="text-slate-500 text-xl max-w-2xl font-medium">{t('tx.subtitle')}</p>
         </div>
 
         <div className="flex bg-white p-2 rounded-[40px] border border-slate-200 shadow-xl overflow-x-auto no-scrollbar">

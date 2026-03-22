@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useI18n } from './i18n';
 import { useSearchParams } from 'react-router-dom';
 import { 
   ShieldAlert, 
@@ -670,6 +671,7 @@ const FinanceIntelligenceBot = ({
 // --- Main FinanceCockpit Wrapper ---
 
 export default function FinanceCockpit() {
+  const { t } = useI18n();
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'heatmap';
   const heatmapData = useMemo(() => generateHeatmapData(), []);
@@ -738,11 +740,11 @@ export default function FinanceCockpit() {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-             <div className="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">Treasury Node Active</div>
-             <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bank XYZ Liquidity Hub</div>
+              <div className="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">{t('fin.treasury_active')}</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('fin.liquidity_hub')}</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">Finance Cockpit</h1>
-          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">Real-time liquidity stress forecasting and automated AI bank-to-ERP reconciliation.</p>
+          <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('fin.title')}</h1>
+          <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">{t('fin.subtitle')}</p>
         </div>
       </div>
       

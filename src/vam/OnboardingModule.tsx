@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useI18n } from './i18n';
 import { 
   Users, 
   FileText, 
@@ -97,6 +98,7 @@ const INITIAL_APPLICATIONS: OnboardingApplication[] = [
 ];
 
 export default function OnboardingModule() {
+  const { t } = useI18n();
   const [activeView, setActiveView] = useState<'LIST' | 'WIZARD' | 'MANAGE'>('LIST');
   const [selectedMerchantId, setSelectedMerchantId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -277,31 +279,30 @@ export default function OnboardingModule() {
       <div className="flex justify-between items-end">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-             <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black uppercase tracking-widest">Master Registry</div>
-             <span className="text-[10px] font-bold text-slate-400">Node: XYZ-REG-01</span>
+              <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black uppercase tracking-widest">{t('onb.master_registry')}</div>
           </div>
-          <h1 className="text-6xl font-black text-slate-800 tracking-tighter">Client List</h1>
-          <p className="text-xl text-slate-500 font-medium max-w-xl">Unified lifecycle management for institutional partners. Onboard, configure VA rails, and manage credentials in one plane.</p>
+           <h1 className="text-6xl font-black text-slate-800 tracking-tighter">{t('onb.title')}</h1>
+           <p className="text-xl text-slate-500 font-medium max-w-xl">{t('onb.subtitle')}</p>
         </div>
         <button 
           onClick={startNewOnboarding}
           className="px-8 py-5 bg-blue-600 text-white rounded-[24px] text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-blue-100 hover:scale-105 transition-all flex items-center gap-3"
         >
-          <Plus size={20} /> New Merchant & VA Pool
+           <Plus size={20} /> {t('onb.new_merchant')}
         </button>
       </div>
 
       <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-           <div className="flex items-center gap-4">
-              <h3 className="text-xl font-black text-slate-800 tracking-tight">Institutional Partners</h3>
-              <div className="relative">
-                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
+         <div className="p-8 border-b border-slate-50 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+               <h3 className="text-xl font-black text-slate-800 tracking-tight">{t('onb.institutional_partners')}</h3>
+               <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                  <input 
                    type="text" 
                    value={searchTerm}
                    onChange={(e) => setSearchTerm(e.target.value)}
-                   placeholder="Search registry..."
+                   placeholder={t('onb.search')}
                    className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold outline-none focus:border-blue-500 w-64"
                  />
               </div>
@@ -310,10 +311,10 @@ export default function OnboardingModule() {
         <table className="w-full text-sm">
            <thead className="bg-slate-50 text-left">
               <tr>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Partner Entity</th>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">VA Prefix</th>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Risk Index</th>
-                 <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('onb.partner_entity')}</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('onb.va_prefix')}</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('onb.risk_index')}</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('common.status')}</th>
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
@@ -524,8 +525,8 @@ export default function OnboardingModule() {
                       <button onClick={() => setIsAiPanelOpen(!isAiPanelOpen)} className={`px-4 py-2.5 rounded-xl border flex items-center gap-2 transition-all ${isAiPanelOpen ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
                          <BrainCircuit size={16} /> <span className="text-[10px] font-black uppercase tracking-widest">Copilot</span>
                       </button>
-                      <button onClick={() => { alert('Application Submitted'); setActiveView('LIST'); }} className="px-8 py-2.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center gap-2">
-                         Finalize & Provision <Zap size={16} />
+                       <button onClick={() => { alert('Application Submitted'); setActiveView('LIST'); }} className="px-8 py-2.5 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center gap-2">
+                          {t('onb.submit')} <Zap size={16} />
                       </button>
                    </div>
                 </div>

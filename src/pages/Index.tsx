@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { I18nProvider, LanguageSwitcher } from '@/vam/i18n';
+import { I18nProvider, LanguageSwitcher, useI18n } from '@/vam/i18n';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
@@ -28,38 +28,38 @@ import OpsDeskModule from '@/vam/OpsDeskModule';
 import VaTransactionsModule from '@/vam/VaTransactionsModule';
 import { ProductTour, TourTriggerButton, TourStep } from '@/components/ProductTour';
 
-// --- Navigation Data ---
-const NAV_ITEMS = [
-  { label: 'Operations', icon: Activity, to: '/admin', description: 'Monitoring & Diagnostics', tourId: 'nav-operations' },
-  { label: 'Onboarding', icon: Users, to: '/config', description: 'Merchant Registry', tourId: 'nav-onboarding' },
+// --- Navigation Data (uses translation keys) ---
+const getNavItems = (t: (key: string) => string) => [
+  { label: t('nav.operations'), icon: Activity, to: '/admin', description: t('nav.monitoring'), tourId: 'nav-operations' },
+  { label: t('nav.onboarding'), icon: Users, to: '/config', description: t('nav.merchant_registry'), tourId: 'nav-onboarding' },
   { 
-    label: 'Transactions', icon: CreditCard,
-    description: 'VA & Payment Rails',
+    label: t('nav.transactions'), icon: CreditCard,
+    description: t('nav.va_payment'),
     tourId: 'nav-transactions',
     subItems: [
-      { label: 'Real-time Inquiry', to: '/va/inquiry?tab=inquiry' },
-      { label: 'Batch Processing', to: '/va/inquiry?tab=batch' },
-      { label: 'Exception Manager', to: '/va/inquiry?tab=exceptions' },
+      { label: t('nav.realtime_inquiry'), to: '/va/inquiry?tab=inquiry' },
+      { label: t('nav.batch_processing'), to: '/va/inquiry?tab=batch' },
+      { label: t('nav.exception_manager'), to: '/va/inquiry?tab=exceptions' },
     ]
   },
   { 
-    label: 'Treasury', icon: Layout,
-    description: 'Liquidity & Recon',
+    label: t('nav.treasury'), icon: Layout,
+    description: t('nav.liquidity'),
     tourId: 'nav-treasury',
     subItems: [
-      { label: 'Liquidity Heatmap', to: '/finance/cockpit?tab=heatmap' },
-      { label: 'ERP Reconciliation', to: '/finance/cockpit?tab=reconciliation' },
-      { label: 'OJK Reporting', to: '/va/ojk' },
+      { label: t('nav.liquidity_heatmap'), to: '/finance/cockpit?tab=heatmap' },
+      { label: t('nav.erp_reconciliation'), to: '/finance/cockpit?tab=reconciliation' },
+      { label: t('nav.ojk_reporting'), to: '/va/ojk' },
     ]
   },
   { 
-    label: 'Middleware', icon: Terminal,
-    description: 'SNAP BI & Security',
+    label: t('nav.middleware'), icon: Terminal,
+    description: t('nav.snap_security'),
     tourId: 'nav-middleware',
     subItems: [
-      { label: 'SNAP BI Tools', to: '/dev/ai' },
-      { label: 'Credential Guard', to: '/dev/security' },
-      { label: 'Sentinel Monitor', to: '/dev/monitor' },
+      { label: t('nav.snap_tools'), to: '/dev/ai' },
+      { label: t('nav.credential_guard'), to: '/dev/security' },
+      { label: t('nav.sentinel_monitor'), to: '/dev/monitor' },
     ]
   },
 ];
@@ -178,6 +178,9 @@ function SidebarNavItem({ item, collapsed }: { item: any; collapsed: boolean }) 
 
 // --- Sidebar ---
 function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+  const { t } = useI18n();
+  const NAV_ITEMS = useMemo(() => getNavItems(t), [t]);
+
   return (
     <aside
       data-tour="sidebar"
@@ -194,7 +197,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           {!collapsed && (
             <div className="overflow-hidden animate-slide-in">
               <p className="text-[13px] font-bold text-white tracking-tight leading-none">Zenith VAM</p>
-              <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">CONTROL PLANE v4.8</p>
+              <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">{t('sidebar.control_plane')}</p>
             </div>
           )}
         </div>
@@ -203,7 +206,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
       {/* Section label */}
       {!collapsed && (
         <div className="px-6 mb-2">
-          <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-sidebar-foreground/25">Navigation</span>
+          <span className="text-[9px] font-bold tracking-[0.2em] uppercase text-sidebar-foreground/25">{t('nav.navigation')}</span>
         </div>
       )}
 
@@ -220,11 +223,11 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           <div className="px-2 space-y-2">
             <div className="flex items-center gap-2">
               <div className="status-dot-healthy" />
-              <span className="text-[10px] font-mono text-sidebar-foreground/50">CORE_ENGINE: ACTIVE</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Shield size={12} className="text-sidebar-foreground/30" />
-              <span className="text-[10px] font-mono text-sidebar-foreground/35">SEC_LVL: 4 • H2H_ACTIVE</span>
+               <span className="text-[10px] font-mono text-sidebar-foreground/50">{t('sidebar.core_engine')}</span>
+             </div>
+             <div className="flex items-center gap-2">
+               <Shield size={12} className="text-sidebar-foreground/30" />
+               <span className="text-[10px] font-mono text-sidebar-foreground/35">{t('sidebar.sec_lvl')}</span>
             </div>
           </div>
         ) : (
@@ -239,6 +242,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
 
 // --- Header ---
 function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void; onStartTour: () => void }) {
+  const { t } = useI18n();
   return (
     <header className="h-14 bg-card border-b border-border/60 flex items-center justify-between px-4 shrink-0 z-50" data-tour="header">
       <div className="flex items-center gap-2">
@@ -254,7 +258,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         <div className="hidden md:flex items-center gap-1.5 ml-2">
           <span className="text-[11px] font-semibold text-muted-foreground/60">Bank XYZ</span>
           <ChevronRight size={12} className="text-muted-foreground/30" />
-          <span className="text-[11px] font-semibold text-foreground">Control Plane</span>
+          <span className="text-[11px] font-semibold text-foreground">{t('header.control_plane')}</span>
         </div>
       </div>
 
@@ -265,7 +269,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         {/* Search */}
         <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 hover:bg-muted text-muted-foreground text-[11px] transition-colors border border-border/50" data-tour="search">
           <Search size={13} />
-          <span>Search...</span>
+          <span>{t('header.search')}</span>
           <kbd className="ml-4 px-1.5 py-0.5 rounded bg-card border border-border text-[9px] font-mono">⌘K</kbd>
         </button>
 
@@ -275,7 +279,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         {/* Status pill */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20" data-tour="status-pill">
           <div className="status-dot-healthy" />
-          <span className="text-[10px] font-semibold text-accent font-mono">ALL SYSTEMS NOMINAL</span>
+          <span className="text-[10px] font-semibold text-accent font-mono">{t('header.all_systems')}</span>
         </div>
 
         {/* Notifications */}
@@ -290,8 +294,8 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
             A
           </div>
           <div className="hidden sm:block">
-            <p className="text-[11px] font-semibold text-foreground leading-none">Admin</p>
-            <p className="text-[9px] text-muted-foreground font-mono mt-0.5">Level 4</p>
+            <p className="text-[11px] font-semibold text-foreground leading-none">{t('header.admin')}</p>
+            <p className="text-[9px] text-muted-foreground font-mono mt-0.5">{t('header.level')} 4</p>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useI18n } from './i18n';
 import { 
   Activity, 
   ShieldAlert, 
@@ -35,6 +36,7 @@ import { SimulationEngine } from './SimulationEngine';
 import { LimitAgent, LimitPrediction, VolumeStat } from './LimitAgent';
 
 export default function OpsDeskModule() {
+  const { t } = useI18n();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [diagnosis, setDiagnosis] = useState<AgentDiagnosis | null>(null);
   const [supportQuery, setSupportQuery] = useState('');
@@ -129,8 +131,8 @@ export default function OpsDeskModule() {
            <div className="flex items-center gap-3">
               <ShieldX size={20} />
               <div className="text-xs font-bold">
-                 <p className="uppercase tracking-widest font-black">AI Service Quota Exceeded</p>
-                 <p className="opacity-80">Real-time proactive diagnostics are temporarily running in fallback mode.</p>
+               <p className="uppercase tracking-widest font-black">{t('ops.quota_exceeded')}</p>
+                  <p className="opacity-80">{t('ops.quota_fallback')}</p>
               </div>
            </div>
            <button onClick={() => setQuotaExceeded(false)} className="text-white/50 hover:text-white"><X size={18} /></button>
@@ -139,13 +141,13 @@ export default function OpsDeskModule() {
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-           <h2 className="text-4xl font-black text-slate-800 tracking-tighter">Operations Desk</h2>
-           <p className="text-slate-500 font-medium">Bank XYZ Sentinel AI • Proactive Monitoring & Troubleshooting</p>
+           <h2 className="text-4xl font-black text-slate-800 tracking-tighter">{t('ops.title')}</h2>
+           <p className="text-slate-500 font-medium">{t('ops.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="text-[10px] font-black uppercase tracking-widest">Gateway Healthy</span>
+               <span className="text-[10px] font-black uppercase tracking-widest">{t('ops.gateway_healthy')}</span>
            </div>
            {/* Notification Bell */}
            <div className="relative">
@@ -163,8 +165,8 @@ export default function OpsDeskModule() {
              {showNotifications && (
                <div className="absolute right-0 top-12 w-96 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200">
                  <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                   <h4 className="text-sm font-black text-slate-800">Notifications</h4>
-                   <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Mark All Read</button>
+                    <h4 className="text-sm font-black text-slate-800">{t('ops.notifications')}</h4>
+                    <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">{t('ops.mark_all_read')}</button>
                  </div>
                  <div className="max-h-80 overflow-y-auto">
                    {notifications.map(n => (
@@ -194,16 +196,16 @@ export default function OpsDeskModule() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <TrendingUp size={20} className="text-blue-600" />
-                 <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Predictive Capacity Monitor</h3>
+                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">{t('ops.predictive_monitor')}</h3>
               </div>
               {prediction?.projected_breach_time && !limitOverrideApplied && (
                 <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-red-50 text-red-600">
-                   <AlertTriangle size={12} /> Limit Breach Projected: {prediction.projected_breach_time} WIB
+                   <AlertTriangle size={12} /> {t('ops.limit_breach')}: {prediction.projected_breach_time} WIB
                 </div>
               )}
               {limitOverrideApplied && (
                 <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-emerald-50 text-emerald-600">
-                   <CheckCircle2 size={12} /> Override Active
+                   <CheckCircle2 size={12} /> {t('ops.override_active')}
                 </div>
               )}
             </div>
@@ -227,8 +229,8 @@ export default function OpsDeskModule() {
             </div>
             <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI Recommendation</p>
-                  <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || "Analyzing traffic patterns..."}</p>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ops.ai_recommendation')}</p>
+                   <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || t('ops.analyzing')}</p>
                </div>
                <button 
                  onClick={handleApplyLimitOverride}
@@ -239,9 +241,9 @@ export default function OpsDeskModule() {
                      : 'bg-slate-900 text-white hover:bg-slate-800'
                  }`}
                >
-                  {limitOverrideApplied ? (
-                    <span className="flex items-center gap-2"><Check size={14} /> Override Applied</span>
-                  ) : 'Apply Limit Override'}
+                   {limitOverrideApplied ? (
+                     <span className="flex items-center gap-2"><Check size={14} /> {t('ops.override_applied')}</span>
+                   ) : t('ops.apply_limit')}
                </button>
             </div>
           </div>
@@ -250,11 +252,11 @@ export default function OpsDeskModule() {
              <div className="p-6 bg-slate-900/50 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3 text-blue-400">
                    <Terminal size={18} />
-                   <h3 className="text-[11px] font-black uppercase tracking-widest font-mono">Bank XYZ Sentinel AI Diagnostic Feed</h3>
+                   <h3 className="text-[11px] font-black uppercase tracking-widest font-mono">{t('ops.diagnostic_feed')}</h3>
                 </div>
                 <div className="flex items-center gap-1.5">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                   <span className="text-[9px] font-mono text-emerald-500 uppercase">Live Trace</span>
+                   <span className="text-[9px] font-mono text-emerald-500 uppercase">{t('ops.live_trace')}</span>
                 </div>
              </div>
              
@@ -264,9 +266,9 @@ export default function OpsDeskModule() {
                     diagnosis.diagnosis.classification === 'Systemic' ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
                   }`}>
                     <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs">
-                       <ShieldAlert size={14} /> AI Analysis: {diagnosis.diagnosis.classification} Issue Detected
+                       <ShieldAlert size={14} /> {t('ops.ai_analysis')}: {diagnosis.diagnosis.classification} {t('ops.issue_detected')}
                     </div>
-                    <p className="text-xs opacity-80 leading-relaxed font-bold">Root Cause Hypothesis: {diagnosis.diagnosis.root_cause_hypothesis}</p>
+                    <p className="text-xs opacity-80 leading-relaxed font-bold">{t('ops.root_cause')}: {diagnosis.diagnosis.root_cause_hypothesis}</p>
                   </div>
                 )}
                 {logs.map((log, i) => (
@@ -286,7 +288,7 @@ export default function OpsDeskModule() {
           <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm flex flex-col h-[520px]">
              <div className="flex items-center gap-3 mb-6">
                 <MessageSquare size={24} className="text-blue-600" />
-                <h3 className="text-lg font-black text-slate-800 tracking-tight">Support Copilot</h3>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">{t('ops.support_copilot')}</h3>
              </div>
              <div className="relative mb-6">
                 <input 
@@ -328,7 +330,7 @@ export default function OpsDeskModule() {
                 ) : (
                    <div className="h-full flex flex-col items-center justify-center opacity-20 text-center">
                       <Ghost size={48} className="mb-4" />
-                      <p className="text-[10px] font-black uppercase tracking-widest">Awaiting Command...<br/>Translate natural language to SQL instantly.</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest">{t('ops.awaiting_command')}<br/>{t('ops.translate_nlp')}</p>
                    </div>
                 )}
              </div>
