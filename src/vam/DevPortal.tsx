@@ -753,6 +753,7 @@ const SentinelMonitor = () => {
 // --- Main DevPortal Module ---
 
 export default function DevPortal() {
+  const { t } = useI18n();
   const { tab } = useParams();
   
   const getInitialTab = () => {
