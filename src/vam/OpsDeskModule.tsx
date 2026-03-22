@@ -36,6 +36,7 @@ import { SimulationEngine } from './SimulationEngine';
 import { LimitAgent, LimitPrediction, VolumeStat } from './LimitAgent';
 
 export default function OpsDeskModule() {
+  const { t } = useI18n();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [diagnosis, setDiagnosis] = useState<AgentDiagnosis | null>(null);
   const [supportQuery, setSupportQuery] = useState('');
