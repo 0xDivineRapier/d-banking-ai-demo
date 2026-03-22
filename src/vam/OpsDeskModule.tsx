@@ -241,9 +241,9 @@ export default function OpsDeskModule() {
                      : 'bg-slate-900 text-white hover:bg-slate-800'
                  }`}
                >
-                  {limitOverrideApplied ? (
-                    <span className="flex items-center gap-2"><Check size={14} /> Override Applied</span>
-                  ) : 'Apply Limit Override'}
+                   {limitOverrideApplied ? (
+                     <span className="flex items-center gap-2"><Check size={14} /> {t('ops.override_applied')}</span>
+                   ) : t('ops.apply_limit')}
                </button>
             </div>
           </div>
