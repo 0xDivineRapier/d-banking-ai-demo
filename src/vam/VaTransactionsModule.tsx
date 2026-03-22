@@ -381,6 +381,7 @@ const BatchTab = () => {
 };
 
 const ExceptionTab = () => {
+  const { t } = useI18n();
   const [exceptions, setExceptions] = useState(EXCEPTIONS.map(e => ({ ...e, resolved: false })));
   const [resolving, setResolving] = useState(false);
 
