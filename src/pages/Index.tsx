@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { I18nProvider, LanguageSwitcher } from '@/vam/i18n';
+import { I18nProvider, LanguageSwitcher, useI18n } from '@/vam/i18n';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
