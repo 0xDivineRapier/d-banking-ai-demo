@@ -772,12 +772,12 @@ export default function DevPortal() {
   }, [tab]);
 
   const TABS = [
-    { id: 'SANDBOX', label: 'Simulation', icon: FlaskConical },
-    { id: 'SDK', label: 'Resilient SDK', icon: Cpu },
-    { id: 'AI', label: 'AI Architect', icon: BrainCircuit },
-    { id: 'HEALER', label: 'Payload Healer', icon: Stethoscope },
-    { id: 'CREDENTIAL', label: 'Credential Guard', icon: Key },
-    { id: 'SENTINEL', label: 'Sentinel Monitor', icon: Shield },
+    { id: 'SANDBOX', label: t('dev.simulation'), icon: FlaskConical },
+    { id: 'SDK', label: t('dev.sdk'), icon: Cpu },
+    { id: 'AI', label: t('dev.architect'), icon: BrainCircuit },
+    { id: 'HEALER', label: t('dev.healer'), icon: Stethoscope },
+    { id: 'CREDENTIAL', label: t('dev.credential'), icon: Key },
+    { id: 'SENTINEL', label: t('dev.sentinel'), icon: Shield },
   ];
 
   return (
