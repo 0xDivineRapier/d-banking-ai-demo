@@ -141,8 +141,8 @@ export default function OpsDeskModule() {
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-           <h2 className="text-4xl font-black text-slate-800 tracking-tighter">Operations Desk</h2>
-           <p className="text-slate-500 font-medium">Bank XYZ Sentinel AI • Proactive Monitoring & Troubleshooting</p>
+           <h2 className="text-4xl font-black text-slate-800 tracking-tighter">{t('ops.title')}</h2>
+           <p className="text-slate-500 font-medium">{t('ops.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
