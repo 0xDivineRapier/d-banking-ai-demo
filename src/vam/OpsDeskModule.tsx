@@ -165,8 +165,8 @@ export default function OpsDeskModule() {
              {showNotifications && (
                <div className="absolute right-0 top-12 w-96 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200">
                  <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                   <h4 className="text-sm font-black text-slate-800">Notifications</h4>
-                   <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Mark All Read</button>
+                    <h4 className="text-sm font-black text-slate-800">{t('ops.notifications')}</h4>
+                    <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">{t('ops.mark_all_read')}</button>
                  </div>
                  <div className="max-h-80 overflow-y-auto">
                    {notifications.map(n => (
