@@ -205,7 +205,7 @@ export default function OpsDeskModule() {
               )}
               {limitOverrideApplied && (
                 <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-emerald-50 text-emerald-600">
-                   <CheckCircle2 size={12} /> Override Active
+                   <CheckCircle2 size={12} /> {t('ops.override_active')}
                 </div>
               )}
             </div>
