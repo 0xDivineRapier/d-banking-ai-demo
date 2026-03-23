@@ -138,11 +138,13 @@ export default function OnboardingModule() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
+  const [applications, setApplications] = useState(INITIAL_APPLICATIONS);
+  
   const filteredMerchants = useMemo(() => {
-    return INITIAL_APPLICATIONS.filter(m => 
+    return applications.filter(m => 
       m.merchant_name.toLowerCase().includes(searchTerm.toLowerCase()) || m.cif.includes(searchTerm)
     );
-  }, [searchTerm]);
+  }, [searchTerm, applications]);
 
   const selectedMerchant = useMemo(() => 
     INITIAL_APPLICATIONS.find(m => m.id === selectedMerchantId),

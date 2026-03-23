@@ -92,7 +92,7 @@ const AIArchitectChat = () => {
           </div>
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-widest">AI Architect Brain</h3>
-            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Active Session: Zenith-01</p>
+            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Active Session: BankXYZ-01</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
