@@ -44,7 +44,7 @@ export const PERSONAS: Record<PersonaType, PersonaProfile> = {
   CORE_BANKING_FAULT: {
     id: 'CORE_BANKING_FAULT',
     label: 'Core Banking Fault',
-    description: 'Simulated connection loss to Zenith-Core backend.',
+    description: 'Simulated connection loss to Bank XYZ Core backend.',
     volume: 10,
     avgAmount: '0.00'
   },

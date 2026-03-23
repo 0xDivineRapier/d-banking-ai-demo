@@ -26,6 +26,7 @@ import FinanceCockpit from '@/vam/FinanceCockpit';
 import OnboardingModule from '@/vam/OnboardingModule';
 import OpsDeskModule from '@/vam/OpsDeskModule';
 import VaTransactionsModule from '@/vam/VaTransactionsModule';
+import OjkReportingModule from '@/vam/OjkReportingModule';
 import { ProductTour, TourTriggerButton, TourStep } from '@/components/ProductTour';
 
 // --- Navigation Data (uses translation keys) ---
@@ -37,7 +38,7 @@ const getNavItems = (t: (key: string) => string) => [
     description: t('nav.va_payment'),
     tourId: 'nav-transactions',
     subItems: [
-      { label: t('nav.realtime_inquiry'), to: '/va/inquiry?tab=inquiry' },
+      { label: t('nav.all_transactions'), to: '/va/inquiry?tab=transactions' },
       { label: t('nav.batch_processing'), to: '/va/inquiry?tab=batch' },
       { label: t('nav.exception_manager'), to: '/va/inquiry?tab=exceptions' },
     ]
@@ -196,7 +197,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           </div>
           {!collapsed && (
             <div className="overflow-hidden animate-slide-in">
-              <p className="text-[13px] font-bold text-white tracking-tight leading-none">Zenith VAM</p>
+              <p className="text-[13px] font-bold text-white tracking-tight leading-none">Bank XYZ</p>
               <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">{t('sidebar.control_plane')}</p>
             </div>
           )}
@@ -307,8 +308,8 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
 const TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="sidebar-logo"]',
-    title: 'Welcome to Zenith VAM',
-    content: 'This is the Zenith Banking Virtual Account Management Control Plane — your AI-powered command center for Bank XYZ operations.',
+    title: 'Welcome to Bank XYZ',
+    content: 'This is the Bank XYZ Virtual Account Management Control Plane — your AI-powered command center for Bank XYZ operations.',
     placement: 'right',
   },
   {
@@ -409,6 +410,7 @@ export default function Index() {
                 <Route path="/dev/:tab" element={<DevPortal />} />
                 <Route path="/dev" element={<DevPortal />} />
                 <Route path="/config" element={<OnboardingModule />} />
+                <Route path="/va/ojk" element={<OjkReportingModule />} />
                 <Route path="/va/inquiry" element={<VaTransactionsModule />} />
                 <Route path="*" element={
                   <div className="flex flex-col items-center justify-center h-[60vh] text-muted-foreground/30">

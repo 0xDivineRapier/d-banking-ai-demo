@@ -19,7 +19,10 @@ import {
   ArrowUpRight,
   ShieldX,
   X,
-  Check
+  Check,
+  Building,
+  DollarSign,
+  Users
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -34,6 +37,30 @@ import { LogMonitorAgent, LogEntry, AgentDiagnosis } from './LogMonitorAgent';
 import { ReportingAgent, ReportResult } from './ReportingAgent';
 import { SimulationEngine } from './SimulationEngine';
 import { LimitAgent, LimitPrediction, VolumeStat } from './LimitAgent';
+
+// --- Corporate Client Data ---
+const CORPORATE_CLIENTS = [
+  { name: 'PT. Hasjrat Abadi', code: 'HSJ', connection: 'H2H-SOCKET', vol24h: 14820, txMonth: 128450, fee: 385350000, cashback: 19267500, status: 'ACTIVE' },
+  { name: 'Xendit Group', code: 'XND', connection: 'REST-API', vol24h: 9240, txMonth: 89210, fee: 267630000, cashback: 13381500, status: 'ACTIVE' },
+  { name: 'PT. Flip Indonesia', code: 'FLP', connection: 'REST-API', vol24h: 7650, txMonth: 72340, fee: 217020000, cashback: 10851000, status: 'ACTIVE' },
+  { name: 'Modalku Financial', code: 'MDK', connection: 'H2H-SOCKET', vol24h: 6890, txMonth: 61200, fee: 183600000, cashback: 9180000, status: 'ACTIVE' },
+  { name: 'PT. Dana Indonesia', code: 'DNA', connection: 'REST-API', vol24h: 5430, txMonth: 52180, fee: 156540000, cashback: 7827000, status: 'ACTIVE' },
+  { name: 'OVO (Visionet)', code: 'OVO', connection: 'REST-API', vol24h: 4980, txMonth: 48920, fee: 146760000, cashback: 7338000, status: 'ACTIVE' },
+  { name: 'GoPay (Tokopedia)', code: 'GPY', connection: 'H2H-SOCKET', vol24h: 4210, txMonth: 41500, fee: 124500000, cashback: 6225000, status: 'ACTIVE' },
+  { name: 'ShopeePay Digital', code: 'SPD', connection: 'REST-API', vol24h: 3890, txMonth: 38900, fee: 116700000, cashback: 5835000, status: 'ACTIVE' },
+  { name: 'PT. Akulaku Silvrr', code: 'AKU', connection: 'REST-API', vol24h: 3450, txMonth: 34500, fee: 103500000, cashback: 5175000, status: 'ACTIVE' },
+  { name: 'LinkAja (Fintek)', code: 'LKA', connection: 'H2H-SOCKET', vol24h: 2980, txMonth: 28400, fee: 85200000, cashback: 4260000, status: 'ACTIVE' },
+  { name: 'Kredivo Group', code: 'KRD', connection: 'REST-API', vol24h: 2750, txMonth: 26100, fee: 78300000, cashback: 3915000, status: 'ACTIVE' },
+  { name: 'PT. Bukalapak', code: 'BKL', connection: 'REST-API', vol24h: 2340, txMonth: 22800, fee: 68400000, cashback: 3420000, status: 'ACTIVE' },
+  { name: 'Blibli (Global Digital)', code: 'BLB', connection: 'H2H-SOCKET', vol24h: 2100, txMonth: 19500, fee: 58500000, cashback: 2925000, status: 'ACTIVE' },
+  { name: 'PT. Traveloka', code: 'TVK', connection: 'REST-API', vol24h: 1890, txMonth: 17800, fee: 53400000, cashback: 2670000, status: 'ACTIVE' },
+  { name: 'Astra Financial', code: 'ASF', connection: 'H2H-SOCKET', vol24h: 1650, txMonth: 15200, fee: 45600000, cashback: 2280000, status: 'ACTIVE' },
+  { name: 'PT. Pegadaian', code: 'PGD', connection: 'REST-API', vol24h: 1420, txMonth: 13100, fee: 39300000, cashback: 1965000, status: 'ACTIVE' },
+  { name: 'Mandiri Sekuritas', code: 'MDS', connection: 'H2H-SOCKET', vol24h: 1280, txMonth: 11800, fee: 35400000, cashback: 1770000, status: 'ACTIVE' },
+  { name: 'PT. Indosat Ooredoo', code: 'IDS', connection: 'REST-API', vol24h: 1100, txMonth: 10200, fee: 30600000, cashback: 1530000, status: 'ACTIVE' },
+  { name: 'Telkomsel (T-Money)', code: 'TKS', connection: 'H2H-SOCKET', vol24h: 980, txMonth: 9400, fee: 28200000, cashback: 1410000, status: 'ACTIVE' },
+  { name: 'PT. Prudential Life', code: 'PRU', connection: 'REST-API', vol24h: 870, txMonth: 8200, fee: 24600000, cashback: 1230000, status: 'ACTIVE' },
+];
 
 export default function OpsDeskModule() {
   const { t } = useI18n();
@@ -57,9 +84,10 @@ export default function OpsDeskModule() {
   const limitAgent = useRef(new LimitAgent());
   const engine = useRef(new SimulationEngine());
 
+  // Much faster diagnostic interval - 3s instead of 10s
   useEffect(() => {
     const interval = setInterval(async () => {
-      const newLogs = await engine.current.generateSystemLogs(1, Math.random() > 0.95);
+      const newLogs = await engine.current.generateSystemLogs(1, Math.random() > 0.92);
       setLogs(prev => [...prev.slice(-14), ...newLogs]);
       if (newLogs[0].severity === 'CRITICAL') {
         try {
@@ -75,7 +103,7 @@ export default function OpsDeskModule() {
           console.error("Diagnosis error", err);
         }
       }
-    }, 10000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -245,6 +273,55 @@ export default function OpsDeskModule() {
                      <span className="flex items-center gap-2"><Check size={14} /> {t('ops.override_applied')}</span>
                    ) : t('ops.apply_limit')}
                </button>
+            </div>
+          </div>
+
+          {/* Corporate Clients Table */}
+          <div className="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Building size={20} className="text-blue-600" />
+                <div>
+                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">{t('ops.corporate_clients')}</h3>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{CORPORATE_CLIENTS.length} Active Partners</p>
+                </div>
+              </div>
+            </div>
+            <div className="max-h-[500px] overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-left sticky top-0">
+                  <tr>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ops.client_name')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ops.connection')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.vol_24h')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.total_tx_month')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.fee')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.cashback')}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {CORPORATE_CLIENTS.map((client, i) => (
+                    <tr key={i} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 text-[10px] font-black">{client.code.slice(0, 2)}</div>
+                          <div>
+                            <p className="font-black text-slate-800 text-xs">{client.name}</p>
+                            <p className="text-[9px] text-slate-400 font-mono">{client.code}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-black ${client.connection.includes('SOCKET') ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'}`}>{client.connection}</span>
+                      </td>
+                      <td className="px-6 py-4 text-right font-black text-slate-800 text-xs">{client.vol24h.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-right font-black text-slate-800 text-xs">{client.txMonth.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-right text-xs font-bold text-slate-600">{(client.fee / 1000000).toFixed(0)}M</td>
+                      <td className="px-6 py-4 text-right text-xs font-bold text-emerald-600">{(client.cashback / 1000000).toFixed(1)}M</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
