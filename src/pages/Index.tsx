@@ -26,6 +26,7 @@ import FinanceCockpit from '@/vam/FinanceCockpit';
 import OnboardingModule from '@/vam/OnboardingModule';
 import OpsDeskModule from '@/vam/OpsDeskModule';
 import VaTransactionsModule from '@/vam/VaTransactionsModule';
+import OjkReportingModule from '@/vam/OjkReportingModule';
 import { ProductTour, TourTriggerButton, TourStep } from '@/components/ProductTour';
 
 // --- Navigation Data (uses translation keys) ---
