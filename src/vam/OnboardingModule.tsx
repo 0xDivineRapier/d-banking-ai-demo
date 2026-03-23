@@ -297,7 +297,7 @@ export default function OnboardingModule() {
       <div className="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden">
          <div className="p-8 border-b border-slate-50 flex items-center justify-between">
             <div className="flex items-center gap-4">
-               <h3 className="text-xl font-black text-slate-800 tracking-tight">{t('onb.institutional_partners')}</h3>
+               <h3 className="text-xl font-black text-slate-800 tracking-tight">{t('onb.corporate_clients')}</h3>
                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                  <input 
