@@ -410,6 +410,7 @@ export default function Index() {
                 <Route path="/dev/:tab" element={<DevPortal />} />
                 <Route path="/dev" element={<DevPortal />} />
                 <Route path="/config" element={<OnboardingModule />} />
+                <Route path="/va/ojk" element={<OjkReportingModule />} />
                 <Route path="/va/inquiry" element={<VaTransactionsModule />} />
                 <Route path="*" element={
                   <div className="flex flex-col items-center justify-center h-[60vh] text-muted-foreground/30">
