@@ -197,7 +197,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
           </div>
           {!collapsed && (
             <div className="overflow-hidden animate-slide-in">
-              <p className="text-[13px] font-bold text-white tracking-tight leading-none">Zenith VAM</p>
+              <p className="text-[13px] font-bold text-white tracking-tight leading-none">Bank XYZ</p>
               <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">{t('sidebar.control_plane')}</p>
             </div>
           )}
