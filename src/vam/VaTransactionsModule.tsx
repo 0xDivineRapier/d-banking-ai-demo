@@ -34,45 +34,27 @@ import {
 
 // --- Mock Data ---
 
-const MOCK_VA_RESULTS: Record<string, any> = {
-  "88001123456": {
-    va_number: "88001123456",
-    customer_name: "Xendit User 99",
-    status: "ACTIVE",
-    expiry: "2026-12-31",
-    shadow_balance: 1500000,
-    core_balance: 1500000,
-    mother_account: "10940001",
-    institution: "Xendit Group",
-    history: [
-      { id: 'tx-1', date: '2026-03-05 14:20', amount: 500000, type: 'SNAP_BI_CREDIT', status: 'SUCCESS', sender_name: 'Budiono Siregar', bank_source: 'Bank Mandiri', external_id: 'X-EXT-992100411', channel: 'MOBILE_BANKING' },
-      { id: 'tx-2', date: '2026-03-04 09:10', amount: 1000000, type: 'SNAP_BI_CREDIT', status: 'SUCCESS', sender_name: 'Siti Aminah', bank_source: 'BCA', external_id: 'X-EXT-992100412', channel: 'ATM' },
-    ]
-  },
-  "88001777888": {
-    va_number: "88001777888",
-    customer_name: "ABC Corp Finance Client A",
-    status: "FROZEN",
-    expiry: "2026-06-15",
-    shadow_balance: 0,
-    core_balance: 12500000,
-    mother_account: "10940001",
-    institution: "ABC Corp",
-    history: [
-      { id: 'tx-3', date: '2026-02-15 10:00', amount: 12500000, type: 'MANUAL_ADJ', status: 'FAILED', sender_name: 'Bank XYZ System Admin', bank_source: 'Internal Bank XYZ', external_id: 'ADJ-10293', channel: 'BACKOFFICE' },
-    ]
-  }
-};
-
 const MOCK_ALL_TRANSACTIONS = [
-  { id: 'TXN-001', va: '88001123456', amount: 500000, type: 'SNAP_BI_CREDIT', status: 'SUCCESS', date: '2026-03-05 14:20', sender: 'Budiono Siregar', institution: 'Xendit' },
-  { id: 'TXN-002', va: '88001123456', amount: 1000000, type: 'SNAP_BI_CREDIT', status: 'SUCCESS', date: '2026-03-04 09:10', sender: 'Siti Aminah', institution: 'Xendit' },
-  { id: 'TXN-003', va: '88041001001', amount: 2500000, type: 'SNAP_BI_CREDIT', status: 'SUCCESS', date: '2026-03-05 11:30', sender: 'Andi Wijaya', institution: 'DEF Payment' },
-  { id: 'TXN-004', va: '88001777888', amount: 12500000, type: 'MANUAL_ADJ', status: 'FAILED', date: '2026-02-15 10:00', sender: 'System Admin', institution: 'ABC Corp' },
-  { id: 'TXN-005', va: '88042000101', amount: 750000, type: 'BI_FAST', status: 'SUCCESS', date: '2026-03-05 16:45', sender: 'PT. Maju Bersama', institution: 'Modalku' },
-  { id: 'TXN-006', va: '88001123456', amount: 150000, type: 'SNAP_BI_CREDIT', status: 'PENDING', date: '2026-03-05 17:00', sender: 'Dewi Sartika', institution: 'Xendit' },
-  { id: 'TXN-007', va: '88041001002', amount: 3200000, type: 'SNAP_BI_CREDIT', status: 'SUCCESS', date: '2026-03-04 08:15', sender: 'Budi Santoso', institution: 'DEF Payment' },
-  { id: 'TXN-008', va: '88042000201', amount: 45000000, type: 'RTGS', status: 'SUCCESS', date: '2026-03-03 14:00', sender: 'PT. Global Corp', institution: 'Internal' },
+  { id: 'TXN-20260305-001', client: 'PT. Hasjrat Abadi', va: '88001123456', sender: 'Budiono Siregar', amount: 500000, status: 'SUCCESS', date: '2026-03-05 14:20' },
+  { id: 'TXN-20260305-002', client: 'Xendit Group', va: '88001123457', sender: 'Siti Aminah', amount: 1000000, status: 'SUCCESS', date: '2026-03-04 09:10' },
+  { id: 'TXN-20260305-003', client: 'PT. Flip Indonesia', va: '88041001001', sender: 'Andi Wijaya', amount: 2500000, status: 'SUCCESS', date: '2026-03-05 11:30' },
+  { id: 'TXN-20260305-004', client: 'PT. ABC Corp', va: '88001777888', sender: 'System Admin', amount: 12500000, status: 'FAILED', date: '2026-02-15 10:00' },
+  { id: 'TXN-20260305-005', client: 'Modalku Financial', va: '88042000101', sender: 'PT. Maju Bersama', amount: 750000, status: 'SUCCESS', date: '2026-03-05 16:45' },
+  { id: 'TXN-20260305-006', client: 'Xendit Group', va: '88001123456', sender: 'Dewi Sartika', amount: 150000, status: 'PENDING', date: '2026-03-05 17:00' },
+  { id: 'TXN-20260305-007', client: 'PT. Dana Indonesia', va: '88041001002', sender: 'Budi Santoso', amount: 3200000, status: 'SUCCESS', date: '2026-03-04 08:15' },
+  { id: 'TXN-20260305-008', client: 'OVO (Visionet)', va: '88042000201', sender: 'PT. Global Corp', amount: 45000000, status: 'SUCCESS', date: '2026-03-03 14:00' },
+  { id: 'TXN-20260305-009', client: 'GoPay (Tokopedia)', va: '88051001001', sender: 'Rizky Pratama', amount: 2800000, status: 'SUCCESS', date: '2026-03-05 10:30' },
+  { id: 'TXN-20260305-010', client: 'ShopeePay Digital', va: '88051002003', sender: 'Lina Susanti', amount: 890000, status: 'PENDING', date: '2026-03-05 18:20' },
+  { id: 'TXN-20260305-011', client: 'PT. Akulaku Silvrr', va: '88061001001', sender: 'Hendra Gunawan', amount: 1750000, status: 'SUCCESS', date: '2026-03-05 09:15' },
+  { id: 'TXN-20260305-012', client: 'LinkAja (Fintek)', va: '88061002004', sender: 'Agus Setiawan', amount: 650000, status: 'FAILED', date: '2026-03-04 16:40' },
+  { id: 'TXN-20260305-013', client: 'Kredivo Group', va: '88071001002', sender: 'Maya Anggraini', amount: 4200000, status: 'SUCCESS', date: '2026-03-05 12:00' },
+  { id: 'TXN-20260305-014', client: 'PT. Bukalapak', va: '88071003001', sender: 'Dian Purnama', amount: 320000, status: 'SUCCESS', date: '2026-03-05 13:45' },
+  { id: 'TXN-20260305-015', client: 'Blibli (Global Digital)', va: '88081001001', sender: 'Wahyu Hidayat', amount: 5600000, status: 'SUCCESS', date: '2026-03-04 11:20' },
+  { id: 'TXN-20260305-016', client: 'PT. Traveloka', va: '88081002001', sender: 'Fitri Rahayu', amount: 1250000, status: 'PENDING', date: '2026-03-05 19:00' },
+  { id: 'TXN-20260305-017', client: 'Astra Financial', va: '88091001001', sender: 'PT. Sentosa Jaya', amount: 18500000, status: 'SUCCESS', date: '2026-03-03 10:00' },
+  { id: 'TXN-20260305-018', client: 'PT. Pegadaian', va: '88091002001', sender: 'Bambang Suryadi', amount: 950000, status: 'SUCCESS', date: '2026-03-05 15:30' },
+  { id: 'TXN-20260305-019', client: 'Mandiri Sekuritas', va: '88101001001', sender: 'Indra Kusuma', amount: 7800000, status: 'SUCCESS', date: '2026-03-04 14:50' },
+  { id: 'TXN-20260305-020', client: 'PT. Prudential Life', va: '88101002003', sender: 'Rini Wulandari', amount: 2100000, status: 'FAILED', date: '2026-03-05 08:30' },
 ];
 
 const BATCH_HISTORY = [
@@ -114,23 +96,23 @@ const TransactionDetailOverlay = ({ tx, onClose }: { tx: any; onClose: () => voi
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-1">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sender</p>
-              <p className="text-sm font-black text-slate-800">{tx.sender_name || tx.sender || 'Anonymous'}</p>
-              <p className="text-[10px] text-slate-500 font-bold uppercase">{tx.bank_source || tx.institution || 'Unknown'}</p>
+              <p className="text-sm font-black text-slate-800">{tx.sender || 'Anonymous'}</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase">{tx.client || 'Unknown'}</p>
             </div>
             <div className="space-y-1 text-right">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Channel</p>
-              <p className="text-sm font-black text-slate-800">{tx.channel || tx.type}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">VA Number</p>
+              <p className="text-sm font-black text-slate-800">{tx.va}</p>
               <p className="text-[10px] text-slate-500 font-bold uppercase">{tx.date}</p>
             </div>
           </div>
           <div className="p-6 bg-slate-50 rounded-[32px] space-y-4 border border-slate-100">
              <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol</span>
-                <span className="text-[10px] font-mono font-bold text-blue-600">{tx.type}</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client</span>
+                <span className="text-[10px] font-mono font-bold text-blue-600">{tx.client}</span>
              </div>
              <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Reference</span>
-                <span className="text-[10px] font-mono font-bold text-slate-800">{tx.external_id || tx.id}</span>
+                <span className="text-[10px] font-mono font-bold text-slate-800">{tx.id}</span>
              </div>
           </div>
           <div className="flex gap-4 pt-4">
@@ -143,119 +125,26 @@ const TransactionDetailOverlay = ({ tx, onClose }: { tx: any; onClose: () => voi
   );
 };
 
-const InquiryTab = () => {
-  const [query, setQuery] = useState('');
-  const [result, setResult] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [selectedTx, setSelectedTx] = useState<any>(null);
-
-  const handleSearch = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setResult(MOCK_VA_RESULTS[query] || null);
-      setLoading(false);
-    }, 800);
-  };
-
-  return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {selectedTx && <TransactionDetailOverlay tx={selectedTx} onClose={() => setSelectedTx(null)} />}
-      <div className="bg-white p-10 rounded-[40px] border border-slate-200 shadow-sm space-y-8">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-blue-600 text-white rounded-[24px] flex items-center justify-center"><Search size={28} /></div>
-          <div>
-            <h3 className="text-2xl font-black text-slate-800 tracking-tight">Real-time VA Inquiry</h3>
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Cross-Reference Bank XYZ Core vs Shadow Rails</p>
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            placeholder="Enter VA Number (e.g. 88001123456)" className="flex-1 px-8 py-5 bg-slate-50 border border-slate-200 rounded-[20px] text-xl font-black text-slate-800 outline-none focus:border-blue-500 shadow-inner" />
-          <button onClick={handleSearch} className="px-10 py-5 bg-slate-900 text-white rounded-[20px] text-[11px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-slate-200">
-            {loading ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />} Query
-          </button>
-        </div>
-      </div>
-
-      {result ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in slide-in-from-bottom duration-500">
-          <div className="lg:col-span-8 space-y-8">
-            <div className="bg-white p-10 rounded-[40px] border border-slate-200 shadow-sm space-y-10">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-6">
-                  <div className={`w-20 h-20 rounded-[28px] flex items-center justify-center text-white font-black text-4xl shadow-lg ${result.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-red-500'}`}>{result.customer_name.charAt(0)}</div>
-                  <div>
-                    <h4 className="text-4xl font-black text-slate-800 tracking-tighter">{result.customer_name}</h4>
-                    <p className="text-lg font-medium text-slate-500">VA: {result.va_number} • {result.institution}</p>
-                  </div>
-                </div>
-                <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${result.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{result.status}</span>
-              </div>
-              <div className="grid grid-cols-2 gap-8 pt-6 border-t border-slate-100">
-                <div className="p-8 bg-slate-50 rounded-[32px] space-y-2">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Shadow Balance</p>
-                  <p className="text-3xl font-black text-blue-600">Rp {result.shadow_balance.toLocaleString()}</p>
-                </div>
-                <div className="p-8 bg-slate-50 rounded-[32px] space-y-2">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Core Balance</p>
-                  <p className="text-3xl font-black text-slate-800">Rp {result.core_balance.toLocaleString()}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
-               <div className="p-8 border-b border-slate-100"><h5 className="text-xl font-black text-slate-800">Recent Activity</h5></div>
-               <table className="w-full text-sm">
-                  <thead className="bg-slate-50"><tr>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Date</th>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Description</th>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Amount</th>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
-                  </tr></thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {result.history.map((tx: any) => (
-                      <tr key={tx.id} className="hover:bg-slate-50 group">
-                        <td className="px-8 py-6 text-slate-500 font-mono text-xs">{tx.date}</td>
-                        <td className="px-8 py-6"><p className="font-black text-slate-800">{tx.type === 'SNAP_BI_CREDIT' ? 'SNAP BI Credit' : 'Manual Adjustment'}</p></td>
-                        <td className="px-8 py-6 font-black text-slate-800">Rp {tx.amount.toLocaleString()}</td>
-                        <td className="px-8 py-6 text-right">
-                          <button onClick={() => setSelectedTx(tx)} className="p-2 bg-slate-100 rounded-xl hover:bg-blue-600 hover:text-white opacity-0 group-hover:opacity-100 transition-all"><ArrowRight size={18} /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-               </table>
-            </div>
-          </div>
-          <div className="lg:col-span-4">
-            <div className="bg-slate-900 p-10 rounded-[40px] text-white shadow-2xl space-y-6">
-              <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Metadata</p>
-              {[{ label: 'Expiry', val: result.expiry }, { label: 'Node', val: 'XYZ-JKT-PRIMARY' }, { label: 'OJK Tier', val: 'Tier 1' }].map((it, i) => (
-                <div key={i} className="flex justify-between border-b border-white/10 pb-2">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase">{it.label}</span>
-                  <span className="text-xs font-black">{it.val}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : query && !loading && (
-        <div className="bg-white p-20 rounded-[40px] border border-slate-200 text-center space-y-4">
-           <AlertCircle size={48} className="text-slate-200 mx-auto" />
-           <p className="text-slate-400 font-bold">No VA found for "{query}".</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const TransactionListTab = () => {
+  const { t } = useI18n();
   const [selectedTx, setSelectedTx] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filtered = useMemo(() => {
-    if (filterStatus === 'ALL') return MOCK_ALL_TRANSACTIONS;
-    return MOCK_ALL_TRANSACTIONS.filter(t => t.status === filterStatus);
-  }, [filterStatus]);
+    let result = MOCK_ALL_TRANSACTIONS;
+    if (filterStatus !== 'ALL') result = result.filter(tx => tx.status === filterStatus);
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(tx => 
+        tx.id.toLowerCase().includes(term) || 
+        tx.client.toLowerCase().includes(term) || 
+        tx.va.includes(term) || 
+        tx.sender.toLowerCase().includes(term)
+      );
+    }
+    return result;
+  }, [filterStatus, searchTerm]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -263,15 +152,27 @@ const TransactionListTab = () => {
       
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-3xl font-black text-slate-800 tracking-tighter">All Transactions</h3>
-          <p className="text-slate-500 font-medium mt-1">Complete ledger of VA payment activity across all rails.</p>
+          <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{t('tx.all')}</h3>
+          <p className="text-slate-500 font-medium mt-1">{t('tx.all_desc')}</p>
         </div>
-        <div className="flex bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
-          {['ALL', 'SUCCESS', 'FAILED', 'PENDING'].map(s => (
-            <button key={s} onClick={() => setFilterStatus(s)}
-              className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterStatus === s ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400'}`}
-            >{s}</button>
-          ))}
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input 
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search transactions..."
+              className="pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-blue-500 w-64"
+            />
+          </div>
+          <div className="flex bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
+            {['ALL', 'SUCCESS', 'FAILED', 'PENDING'].map(s => (
+              <button key={s} onClick={() => setFilterStatus(s)}
+                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterStatus === s ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400'}`}
+              >{s}</button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -279,34 +180,31 @@ const TransactionListTab = () => {
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left">
             <tr>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Reference</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">VA Number</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Sender</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Type</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Date</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.reference')}</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.client')}</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.va_number')}</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.sender')}</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('tx.amount')}</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.status')}</th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('tx.date')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filtered.map(tx => (
               <tr key={tx.id} onClick={() => setSelectedTx(tx)} className="hover:bg-slate-50 transition-colors cursor-pointer group">
-                <td className="px-8 py-5 font-mono text-xs font-bold text-blue-600">{tx.id}</td>
-                <td className="px-8 py-5 font-mono text-xs text-slate-600">{tx.va}</td>
-                <td className="px-8 py-5">
-                  <p className="font-black text-slate-800 text-xs">{tx.sender}</p>
-                  <p className="text-[10px] text-slate-400">{tx.institution}</p>
+                <td className="px-6 py-4 font-mono text-xs font-bold text-blue-600">{tx.id}</td>
+                <td className="px-6 py-4">
+                  <p className="font-black text-slate-800 text-xs">{tx.client}</p>
                 </td>
-                <td className="px-8 py-5 font-black text-slate-800">Rp {tx.amount.toLocaleString()}</td>
-                <td className="px-8 py-5">
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black">{tx.type}</span>
-                </td>
-                <td className="px-8 py-5">
+                <td className="px-6 py-4 font-mono text-xs text-slate-600">{tx.va}</td>
+                <td className="px-6 py-4 text-xs font-bold text-slate-700">{tx.sender}</td>
+                <td className="px-6 py-4 font-black text-slate-800 text-right">Rp {tx.amount.toLocaleString()}</td>
+                <td className="px-6 py-4">
                   <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase ${
                     tx.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700' : tx.status === 'FAILED' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
                   }`}>{tx.status}</span>
                 </td>
-                <td className="px-8 py-5 text-right text-xs text-slate-500 font-medium">{tx.date}</td>
+                <td className="px-6 py-4 text-right text-xs text-slate-500 font-medium">{tx.date}</td>
               </tr>
             ))}
           </tbody>
@@ -317,6 +215,7 @@ const TransactionListTab = () => {
 };
 
 const BatchTab = () => {
+  const { t } = useI18n();
   const handleDownload = (batch: any) => {
     const csvContent = "DATE,INST_CODE,TX_COUNT,GROSS_VOL,TOTAL_FEE,BANK_SHARE,EPAY_SHARE\n" + 
                        `${batch.date},XYZ_INST_99,${batch.count},${(batch.count * 150000).toFixed(2)},${(batch.count * 2500).toFixed(2)},${(batch.count * 1750).toFixed(2)},${(batch.count * 750).toFixed(2)}`;
@@ -333,19 +232,19 @@ const BatchTab = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-3xl font-black text-slate-800 tracking-tighter">Batch Operations</h3>
-          <p className="text-slate-500 font-medium mt-1">Bulk VA creation and settlement processing.</p>
+          <h3 className="text-3xl font-black text-slate-800 tracking-tighter">{t('tx.batch')}</h3>
+          <p className="text-slate-500 font-medium mt-1">{t('tx.batch_desc')}</p>
         </div>
-        <button className="px-8 py-4 bg-blue-600 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2"><Plus size={16} /> New Batch</button>
+        <button className="px-8 py-4 bg-blue-600 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center gap-2"><Plus size={16} /> {t('tx.new_batch')}</button>
       </div>
       <div className="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left">
             <tr>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Filename</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Count</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Date</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.filename')}</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.status')}</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('tx.count')}</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('tx.date')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -359,7 +258,7 @@ const BatchTab = () => {
                     </div>
                     {it.status === 'COMPLETED' && (
                       <button onClick={() => handleDownload(it)} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all text-[10px] font-black uppercase flex items-center gap-2">
-                        <Download size={14} /> Download
+                        <Download size={14} /> {t('tx.download')}
                       </button>
                     )}
                   </div>
@@ -415,7 +314,7 @@ const ExceptionTab = () => {
            }`}
          >
             {resolving ? <RefreshCw size={16} className="animate-spin" /> : exceptions.every(e => e.resolved) ? <Check size={16} /> : <Zap size={16} />}
-            {exceptions.every(e => e.resolved) ? 'All Resolved' : t('tx.resolve_all')}
+            {exceptions.every(e => e.resolved) ? t('tx.all_resolved') : t('tx.resolve_all')}
          </button>
       </div>
 
@@ -434,7 +333,7 @@ const ExceptionTab = () => {
                     <p className={`text-[10px] font-black uppercase tracking-widest ${ex.resolved ? 'text-emerald-500' : 'text-red-500'}`}>
                       {ex.resolved ? 'RESOLVED' : ex.error.replace('_', ' ')}
                     </p>
-                    <h4 className="text-xl font-black text-slate-800 tracking-tight">Rp {ex.amount.toLocaleString()} Inbound</h4>
+                    <h4 className="text-xl font-black text-slate-800 tracking-tight">Rp {ex.amount.toLocaleString()} {t('tx.inbound')}</h4>
                     <p className="text-xs text-slate-400 font-bold">VA: {ex.va} • {ex.date}</p>
                  </div>
               </div>
@@ -443,8 +342,8 @@ const ExceptionTab = () => {
                  {!ex.resolved && (
                    <>
                      <div className="text-right">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Recommended</p>
-                       <p className="text-xs font-bold text-slate-700">Appropriate to Suspense Pool</p>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('tx.recommended')}</p>
+                       <p className="text-xs font-bold text-slate-700">{t('tx.appropriate_suspense')}</p>
                      </div>
                      <button onClick={() => handleResolveSingle(ex.id)} className="p-4 bg-slate-100 text-slate-700 rounded-2xl hover:bg-blue-600 hover:text-white transition-all">
                         <ArrowRight size={20} />
@@ -452,7 +351,7 @@ const ExceptionTab = () => {
                    </>
                  )}
                  {ex.resolved && (
-                   <span className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest">Cleared</span>
+                   <span className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest">{t('tx.cleared')}</span>
                  )}
               </div>
            </div>
@@ -467,10 +366,9 @@ const ExceptionTab = () => {
 export default function VaTransactionsModule() {
   const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('tab') || 'inquiry';
+  const activeTab = searchParams.get('tab') || 'transactions';
 
   const TABS = [
-    { id: 'inquiry', label: t('tx.inquiry'), icon: Search },
     { id: 'transactions', label: t('tx.all'), icon: List },
     { id: 'batch', label: t('tx.batch'), icon: Layers },
     { id: 'exceptions', label: t('tx.exceptions'), icon: ShieldAlert },
@@ -498,7 +396,6 @@ export default function VaTransactionsModule() {
       </div>
 
       <div className="pt-4">
-        {activeTab === 'inquiry' && <InquiryTab />}
         {activeTab === 'transactions' && <TransactionListTab />}
         {activeTab === 'batch' && <BatchTab />}
         {activeTab === 'exceptions' && <ExceptionTab />}
