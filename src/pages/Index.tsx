@@ -308,8 +308,8 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
 const TOUR_STEPS: TourStep[] = [
   {
     target: '[data-tour="sidebar-logo"]',
-    title: 'Welcome to Zenith VAM',
-    content: 'This is the Zenith Banking Virtual Account Management Control Plane — your AI-powered command center for Bank XYZ operations.',
+    title: 'Welcome to Bank XYZ',
+    content: 'This is the Bank XYZ Virtual Account Management Control Plane — your AI-powered command center for Bank XYZ operations.',
     placement: 'right',
   },
   {
