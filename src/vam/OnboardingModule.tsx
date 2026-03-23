@@ -147,7 +147,7 @@ export default function OnboardingModule() {
   }, [searchTerm, applications]);
 
   const selectedMerchant = useMemo(() => 
-    INITIAL_APPLICATIONS.find(m => m.id === selectedMerchantId),
+    applications.find(m => m.id === selectedMerchantId),
   [selectedMerchantId]);
 
   const handleCifSync = async () => {
