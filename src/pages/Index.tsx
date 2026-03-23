@@ -38,7 +38,7 @@ const getNavItems = (t: (key: string) => string) => [
     description: t('nav.va_payment'),
     tourId: 'nav-transactions',
     subItems: [
-      { label: t('nav.realtime_inquiry'), to: '/va/inquiry?tab=inquiry' },
+      { label: t('nav.all_transactions'), to: '/va/inquiry?tab=transactions' },
       { label: t('nav.batch_processing'), to: '/va/inquiry?tab=batch' },
       { label: t('nav.exception_manager'), to: '/va/inquiry?tab=exceptions' },
     ]
