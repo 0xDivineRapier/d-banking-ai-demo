@@ -10,12 +10,12 @@ interface Translations {
 const TRANSLATIONS: Translations = {
   // Navigation
   'nav.operations': { en: 'Operations', ko: '운영' },
-  'nav.onboarding': { en: 'Onboarding', ko: '온보딩' },
+  'nav.onboarding': { en: 'Corporate Clients', ko: '기업 고객' },
   'nav.transactions': { en: 'Transactions', ko: '거래' },
   'nav.treasury': { en: 'Treasury', ko: '재무' },
   'nav.middleware': { en: 'Middleware', ko: '미들웨어' },
   'nav.monitoring': { en: 'Monitoring & Diagnostics', ko: '모니터링 및 진단' },
-  'nav.merchant_registry': { en: 'Merchant Registry', ko: '가맹점 등록' },
+  'nav.merchant_registry': { en: 'Client Registry & Onboarding', ko: '고객 등록 및 온보딩' },
   'nav.va_payment': { en: 'VA & Payment Rails', ko: 'VA 및 결제 레일' },
   'nav.liquidity': { en: 'Liquidity & Recon', ko: '유동성 및 대사' },
   'nav.snap_security': { en: 'SNAP BI & Security', ko: 'SNAP BI 및 보안' },
@@ -73,21 +73,21 @@ const TRANSLATIONS: Translations = {
   'ops.connection': { en: 'Connection', ko: '연결' },
   'ops.vol_24h': { en: 'Vol 24h', ko: '24시간 거래량' },
 
-  // Onboarding
-  'onb.title': { en: 'Client List', ko: '고객 목록' },
+  // Onboarding / Corporate Clients
+  'onb.title': { en: 'Corporate Clients', ko: '기업 고객' },
   'onb.subtitle': { en: 'Unified lifecycle management for corporate clients. Onboard, configure VA rails, and manage credentials in one plane.', ko: '기업 고객을 위한 통합 수명주기 관리. 온보딩, VA 레일 구성, 자격 증명 관리를 한 곳에서.' },
-  'onb.new_merchant': { en: 'New Merchant & VA Pool', ko: '새 가맹점 및 VA 풀' },
-  'onb.search': { en: 'Search registry...', ko: '등록부 검색...' },
-  'onb.partner_entity': { en: 'Partner Entity', ko: '파트너 엔티티' },
+  'onb.new_merchant': { en: 'New Corporate Client', ko: '새 기업 고객' },
+  'onb.search': { en: 'Search corporate clients...', ko: '기업 고객 검색...' },
+  'onb.partner_entity': { en: 'Corporate Entity', ko: '기업 엔티티' },
   'onb.va_prefix': { en: 'VA Prefix', ko: 'VA 접두사' },
   'onb.risk_index': { en: 'Risk Index', ko: '위험 지수' },
-  'onb.master_registry': { en: 'Master Registry', ko: '마스터 등록부' },
+  'onb.master_registry': { en: 'Corporate Registry', ko: '기업 등록부' },
   'onb.corporate_clients': { en: 'Corporate Clients', ko: '기업 고객' },
   'onb.import_csv': { en: 'Import CSV Template', ko: 'CSV 템플릿 가져오기' },
   'onb.import_doc': { en: 'Import Document', ko: '문서 가져오기' },
   'onb.submit': { en: 'Finalize & Provision', ko: '최종 확정 및 프로비전' },
   'onb.one_step': { en: 'One-Step Onboarding', ko: '원스텝 온보딩' },
-  'onb.partner_registry': { en: 'Partner Registry', ko: '파트너 등록부' },
+  'onb.partner_registry': { en: 'Corporate Registry', ko: '기업 등록부' },
   'onb.sync_t24': { en: 'Sync with T24 or upload template.', ko: 'T24과 동기화하거나 템플릿을 업로드하세요.' },
   'onb.core_sync': { en: 'Core Sync', ko: '코어 동기화' },
   'onb.manual': { en: 'Manual', ko: '수동' },
@@ -118,10 +118,14 @@ const TRANSLATIONS: Translations = {
   'onb.view_document': { en: 'View Document', ko: '문서 보기' },
   'onb.credential_guard': { en: 'Credential Guard', ko: '자격 증명 가드' },
   'onb.rotate_secret': { en: 'Rotate Secret', ko: '시크릿 갱신' },
-  'onb.merchant_rsa': { en: 'Merchant RSA Public Key', ko: '가맹점 RSA 공개 키' },
+  'onb.merchant_rsa': { en: 'Corporate RSA Public Key', ko: '기업 RSA 공개 키' },
   'onb.copilot': { en: 'Copilot', ko: '코파일럿' },
   'onb.back': { en: 'Back', ko: '뒤로' },
   'onb.next_va_rails': { en: 'Next: VA Rails', ko: '다음: VA 레일' },
+  'onb.total_tx': { en: 'Total Tx', ko: '총 거래' },
+  'onb.fee': { en: 'Fee', ko: '수수료' },
+  'onb.cashback': { en: 'Cashback', ko: '캐시백' },
+  'onb.connection': { en: 'Connection', ko: '연결' },
 
   // Transactions
   'tx.title': { en: 'Transactions', ko: '거래' },
@@ -164,6 +168,9 @@ const TRANSLATIONS: Translations = {
   'tx.expiry': { en: 'Expiry', ko: '만료일' },
   'tx.node': { en: 'Node', ko: '노드' },
   'tx.ojk_tier': { en: 'OJK Tier', ko: 'OJK 등급' },
+  'tx.total_amount': { en: 'Total Amount', ko: '총 금액' },
+  'tx.success_rate': { en: 'Success Rate', ko: '성공률' },
+  'tx.fee_collected': { en: 'Fee Collected', ko: '수수료 징수' },
 
   // Treasury / Finance Cockpit
   'fin.title': { en: 'Finance Cockpit', ko: '재무 콕핏' },
@@ -266,7 +273,7 @@ const TRANSLATIONS: Translations = {
 
   // Credential Guard
   'cred.registry': { en: 'SNAP BI Credential Registry', ko: 'SNAP BI 자격 증명 레지스트리' },
-  'cred.partner': { en: 'Partner Entity', ko: '파트너 엔티티' },
+  'cred.partner': { en: 'Corporate Entity', ko: '기업 엔티티' },
   'cred.client_id': { en: 'Client ID', ko: '클라이언트 ID' },
   'cred.expires': { en: 'Expires In', ko: '만료' },
   'cred.actions': { en: 'Actions', ko: '작업' },
@@ -315,6 +322,22 @@ const TRANSLATIONS: Translations = {
   'ojk.on_time': { en: 'On-Time Rate', ko: '정시 제출률' },
   'ojk.next_deadline': { en: 'Next Deadline', ko: '다음 마감일' },
   'ojk.compliance_score': { en: 'Compliance Score', ko: '컴플라이언스 점수' },
+
+  // Approver System
+  'approver.title': { en: 'Approval Queue', ko: '승인 대기열' },
+  'approver.pending': { en: 'Pending Approval', ko: '승인 대기' },
+  'approver.approved': { en: 'Approved', ko: '승인됨' },
+  'approver.rejected': { en: 'Rejected', ko: '거부됨' },
+  'approver.approve': { en: 'Approve', ko: '승인' },
+  'approver.reject': { en: 'Reject', ko: '거부' },
+  'approver.approver': { en: 'Approver', ko: '승인자' },
+  'approver.submitted_by': { en: 'Submitted by', ko: '제출자' },
+  'approver.role': { en: 'Approver Role', ko: '승인자 역할' },
+  'approver.queue': { en: 'Items Pending Review', ko: '검토 대기 항목' },
+  'approver.onboarding': { en: 'Onboarding Approval', ko: '온보딩 승인' },
+  'approver.transaction': { en: 'Transaction Approval', ko: '거래 승인' },
+  'approver.treasury': { en: 'Treasury Approval', ko: '재무 승인' },
+  'approver.limit_override': { en: 'Limit Override Approval', ko: '한도 오버라이드 승인' },
 
   // Common
   'common.status': { en: 'Status', ko: '상태' },
