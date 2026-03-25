@@ -19,7 +19,8 @@ import {
   Menu,
   X,
   Search,
-  Command
+  Command,
+  Code
 } from 'lucide-react';
 
 import DevPortal from '@/vam/DevPortal';
@@ -28,6 +29,7 @@ import OnboardingModule from '@/vam/OnboardingModule';
 import OpsDeskModule from '@/vam/OpsDeskModule';
 import VaTransactionsModule from '@/vam/VaTransactionsModule';
 import OjkReportingModule from '@/vam/OjkReportingModule';
+import ApiSandbox from '@/vam/ApiSandbox';
 import { ProductTour, TourTriggerButton, TourStep } from '@/components/ProductTour';
 
 // --- Navigation Data (uses translation keys) ---
@@ -63,6 +65,12 @@ const getNavItems = (t: (key: string) => string) => [
       { label: t('nav.credential_guard'), to: '/dev/security' },
       { label: t('nav.sentinel_monitor'), to: '/dev/monitor' },
     ]
+  },
+  {
+    label: 'API Sandbox', icon: Code,
+    description: 'SNAP API Reference & Testing',
+    tourId: 'nav-sandbox',
+    to: '/sandbox',
   },
 ];
 
@@ -423,6 +431,7 @@ export default function Index() {
                 <Route path="/config" element={<OnboardingModule />} />
                 <Route path="/va/ojk" element={<OjkReportingModule />} />
                 <Route path="/va/inquiry" element={<VaTransactionsModule />} />
+                <Route path="/sandbox" element={<ApiSandbox />} />
                 <Route path="*" element={
                   <div className="flex flex-col items-center justify-center h-[60vh] text-muted-foreground/30">
                     <Database size={48} className="mb-4" />
