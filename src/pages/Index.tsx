@@ -245,6 +245,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
 // --- Header ---
 function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void; onStartTour: () => void }) {
   const { t } = useI18n();
+  const { signOut } = useAuth();
   return (
     <header className="h-14 bg-card border-b border-border/60 flex items-center justify-between px-4 shrink-0 z-50" data-tour="header">
       <div className="flex items-center gap-2">
