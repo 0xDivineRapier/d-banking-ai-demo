@@ -290,6 +290,15 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
           <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-card" />
         </button>
 
+        {/* Sign Out */}
+        <button
+          onClick={() => { const { signOut } = useAuth(); signOut(); }}
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground"
+          title="Sign Out"
+        >
+          <LogOut size={17} />
+        </button>
+
         {/* User */}
         <div className="flex items-center gap-2 pl-2 border-l border-border/50">
           <div className="w-8 h-8 rounded-xl zenith-gradient-accent flex items-center justify-center text-white text-xs font-bold">
