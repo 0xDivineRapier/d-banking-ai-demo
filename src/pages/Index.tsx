@@ -65,6 +65,12 @@ const getNavItems = (t: (key: string) => string) => [
       { label: t('nav.sentinel_monitor'), to: '/dev/monitor' },
     ]
   },
+  {
+    label: 'API Sandbox', icon: Code,
+    description: 'SNAP API Reference & Testing',
+    tourId: 'nav-sandbox',
+    to: '/sandbox',
+  },
 ];
 
 // --- Sidebar Navigation Item ---
