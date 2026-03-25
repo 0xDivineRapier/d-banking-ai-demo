@@ -431,6 +431,7 @@ export default function Index() {
                 <Route path="/config" element={<OnboardingModule />} />
                 <Route path="/va/ojk" element={<OjkReportingModule />} />
                 <Route path="/va/inquiry" element={<VaTransactionsModule />} />
+                <Route path="/sandbox" element={<ApiSandbox />} />
                 <Route path="*" element={
                   <div className="flex flex-col items-center justify-center h-[60vh] text-muted-foreground/30">
                     <Database size={48} className="mb-4" />
