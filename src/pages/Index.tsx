@@ -293,7 +293,7 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
 
         {/* Sign Out */}
         <button
-          onClick={() => { const { signOut } = useAuth(); signOut(); }}
+          onClick={signOut}
           className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground"
           title="Sign Out"
         >
