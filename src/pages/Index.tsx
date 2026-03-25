@@ -19,7 +19,8 @@ import {
   Menu,
   X,
   Search,
-  Command
+  Command,
+  Code
 } from 'lucide-react';
 
 import DevPortal from '@/vam/DevPortal';
