@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { I18nProvider, LanguageSwitcher, useI18n } from '@/vam/i18n';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -244,6 +245,7 @@ function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => 
 // --- Header ---
 function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void; onStartTour: () => void }) {
   const { t } = useI18n();
+  const { signOut } = useAuth();
   return (
     <header className="h-14 bg-card border-b border-border/60 flex items-center justify-between px-4 shrink-0 z-50" data-tour="header">
       <div className="flex items-center gap-2">
@@ -287,6 +289,15 @@ function Header({ onToggleSidebar, onStartTour }: { onToggleSidebar: () => void;
         <button className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground" data-tour="notifications">
           <Bell size={17} />
           <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-card" />
+        </button>
+
+        {/* Sign Out */}
+        <button
+          onClick={signOut}
+          className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-muted transition-colors text-muted-foreground"
+          title="Sign Out"
+        >
+          <LogOut size={17} />
         </button>
 
         {/* User */}
