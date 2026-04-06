@@ -37,7 +37,7 @@ export class LogMonitorAgent {
         diagnosis: {
           classification: "Systemic",
           confidence_score: 0.94,
-          root_cause_hypothesis: "BSS-SNAP Gateway is rejecting 4017300 signatures due to Clock Drift on Merchant Node JKT-02."
+          root_cause_hypothesis: "DOZN-SNAP Gateway is rejecting 4017300 signatures due to Clock Drift on Merchant Node JKT-02."
         },
         recommended_action: {
           action_type: "Circuit_Breaker",

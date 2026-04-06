@@ -37,15 +37,15 @@
     --radius: 0.75rem;
 
     /* Banking-specific tokens */
-    --zenith-navy: 222 47% 11%;
-    --zenith-slate: 215 20% 65%;
-    --zenith-glow: 217 92% 55%;
-    --zenith-success: 160 84% 39%;
-    --zenith-warning: 38 92% 50%;
-    --zenith-critical: 0 72% 51%;
-    --zenith-surface: 220 20% 97%;
-    --zenith-surface-elevated: 0 0% 100%;
-    --zenith-glass: 220 20% 97%;
+    --dozn-navy: 222 47% 11%;
+    --dozn-slate: 215 20% 65%;
+    --dozn-glow: 217 92% 55%;
+    --dozn-success: 160 84% 39%;
+    --dozn-warning: 38 92% 50%;
+    --dozn-critical: 0 72% 51%;
+    --dozn-surface: 220 20% 97%;
+    --dozn-surface-elevated: 0 0% 100%;
+    --dozn-glass: 220 20% 97%;
 
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 215 20% 85%;
@@ -107,6 +107,10 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
+  html, body, #root {
+    @apply h-full overflow-hidden;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
@@ -138,32 +142,32 @@
   }
 
   .glass-panel {
-    background: hsl(var(--zenith-surface-elevated) / 0.8);
+    background: hsl(var(--dozn-surface-elevated) / 0.8);
     backdrop-filter: blur(20px);
     border: 1px solid hsl(var(--border) / 0.6);
   }
 
   .glow-primary {
-    box-shadow: 0 0 20px -5px hsl(var(--zenith-glow) / 0.3);
+    box-shadow: 0 0 20px -5px hsl(var(--dozn-glow) / 0.3);
   }
 
   .glow-success {
-    box-shadow: 0 0 20px -5px hsl(var(--zenith-success) / 0.3);
+    box-shadow: 0 0 20px -5px hsl(var(--dozn-success) / 0.3);
   }
 
-  .zenith-gradient {
-    background: linear-gradient(135deg, hsl(var(--zenith-navy)), hsl(222 47% 16%));
+  .dozn-gradient {
+    background: linear-gradient(135deg, hsl(var(--dozn-navy)), hsl(222 47% 16%));
   }
 
-  .zenith-gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--zenith-glow)), hsl(230 92% 60%));
+  .dozn-gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--dozn-glow)), hsl(230 92% 60%));
   }
 
-  .zenith-card {
+  .dozn-card {
     @apply bg-card rounded-2xl border border-border/60 shadow-sm;
   }
 
-  .zenith-card-elevated {
+  .dozn-card-elevated {
     @apply bg-card rounded-2xl border border-border/60 shadow-lg shadow-black/[0.03];
   }
 
@@ -172,15 +176,15 @@
   }
   .status-dot-healthy {
     @apply status-dot bg-accent;
-    box-shadow: 0 0 8px hsl(var(--zenith-success) / 0.5);
+    box-shadow: 0 0 8px hsl(var(--dozn-success) / 0.5);
   }
   .status-dot-warning {
     @apply status-dot;
-    background: hsl(var(--zenith-warning));
-    box-shadow: 0 0 8px hsl(var(--zenith-warning) / 0.5);
+    background: hsl(var(--dozn-warning));
+    box-shadow: 0 0 8px hsl(var(--dozn-warning) / 0.5);
   }
   .status-dot-critical {
     @apply status-dot bg-destructive;
-    box-shadow: 0 0 8px hsl(var(--zenith-critical) / 0.5);
+    box-shadow: 0 0 8px hsl(var(--dozn-critical) / 0.5);
   }
 }

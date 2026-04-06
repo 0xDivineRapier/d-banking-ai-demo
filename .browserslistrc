@@ -1,0 +1,5 @@
+# Top-level browserslist config to prevent searching parent directories
+defaults
+not dead
+> 0.2%
+last 2 versions

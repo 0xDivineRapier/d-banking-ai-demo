@@ -283,7 +283,7 @@ export class DoznResilientClient {
       responseCode: "2000000", 
       responseMessage: "Successful",
       data: {
-        referenceNo: "BSS-" + Date.now(),
+        referenceNo: "DOZN-" + Date.now(),
         status: "PROCESSED"
       }
     };

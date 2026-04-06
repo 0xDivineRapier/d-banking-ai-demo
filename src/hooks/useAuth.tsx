@@ -1,5 +1,4 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthCtx {
@@ -17,23 +16,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Using dummy auth bypass only
+    if (localStorage.getItem('bankdozn_dummy_auth') === 'true') {
+      setUser({ id: 'dummy-123', email: 'admin@bankxyz.co.id' } as any);
+      setSession({ user: { id: 'dummy-123', email: 'admin@bankxyz.co.id' } } as any);
+    } else {
+      setUser(null);
+      setSession(null);
+    }
+    setLoading(false);
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem('bankdozn_dummy_auth');
+    setUser(null);
+    setSession(null);
   };
 
   return (

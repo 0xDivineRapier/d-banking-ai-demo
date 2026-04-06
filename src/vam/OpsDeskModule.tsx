@@ -33,6 +33,7 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
+import { useTheme } from '@/components/ThemeProvider';
 import { LogMonitorAgent, LogEntry, AgentDiagnosis } from './LogMonitorAgent';
 import { ReportingAgent, ReportResult } from './ReportingAgent';
 import { SimulationEngine } from './SimulationEngine';
@@ -63,9 +64,22 @@ const CORPORATE_CLIENTS = [
 ];
 
 export default function OpsDeskModule() {
-  const { t } = useI18n();
+  const { theme } = useTheme();
+  const { t, language } = useI18n();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [diagnosis, setDiagnosis] = useState<AgentDiagnosis | null>(null);
+  const [clientSearch, setClientSearch] = useState('');
+  const [openIssues, setOpenIssues] = useState([
+    { id: 'ISS-102', title: 'Latency spike in JKT-02', status: 'IN_PROGRESS', progress: 65 },
+    { id: 'ISS-105', title: 'Xendit fee reconciliation mismatch', status: 'OPEN', progress: 10 },
+    { id: 'ISS-108', title: 'Credential rotation failed for PT. Flip', status: 'IN_PROGRESS', progress: 40 },
+  ]);
+
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const chartGridColor = isDarkMode ? '#1e293b' : '#f1f5f9';
+  const tooltipBg = isDarkMode ? '#0f172a' : '#ffffff';
+  const tooltipBorder = isDarkMode ? '#1e293b' : '#e2e8f0';
+  const tooltipText = isDarkMode ? '#f1f5f9' : '#0f172a';
   const [supportQuery, setSupportQuery] = useState('');
   const [supportResult, setSupportResult] = useState<ReportResult | null>(null);
   const [isQuerying, setIsQuerying] = useState(false);
@@ -128,7 +142,7 @@ export default function OpsDeskModule() {
     setIsQuerying(true);
     setQuotaExceeded(false);
     try {
-      const res = await reportAgent.current.queryInsights(supportQuery);
+      const res = await reportAgent.current.queryInsights(supportQuery, language as 'en' | 'ko');
       setSupportResult(res);
     } catch (e: any) {
       console.error(e);
@@ -152,6 +166,14 @@ export default function OpsDeskModule() {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const filteredClients = useMemo(() => {
+    if (!clientSearch) return CORPORATE_CLIENTS;
+    return CORPORATE_CLIENTS.filter(c => 
+      c.name.toLowerCase().includes(clientSearch.toLowerCase()) || 
+      c.code.toLowerCase().includes(clientSearch.toLowerCase())
+    );
+  }, [clientSearch]);
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
       {quotaExceeded && (
@@ -169,11 +191,11 @@ export default function OpsDeskModule() {
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-           <h2 className="text-4xl font-black text-slate-800 tracking-tighter">{t('ops.title')}</h2>
-           <p className="text-slate-500 font-medium">{t('ops.subtitle')}</p>
+           <h2 className="text-4xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{t('ops.title')}</h2>
+           <p className="text-slate-500 dark:text-slate-400 font-medium">{t('ops.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
-           <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
+           <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-100 dark:border-emerald-800/50">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                <span className="text-[10px] font-black uppercase tracking-widest">{t('ops.gateway_healthy')}</span>
            </div>
@@ -181,9 +203,9 @@ export default function OpsDeskModule() {
            <div className="relative">
              <button 
                onClick={() => setShowNotifications(!showNotifications)}
-               className="relative w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
+               className="relative w-10 h-10 flex items-center justify-center bg-card dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
              >
-               <Bell size={18} className="text-slate-600" />
+               <Bell size={18} className="text-slate-600 dark:text-slate-400" />
                {unreadCount > 0 && (
                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center">
                    {unreadCount}
@@ -191,18 +213,18 @@ export default function OpsDeskModule() {
                )}
              </button>
              {showNotifications && (
-               <div className="absolute right-0 top-12 w-96 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200">
-                 <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <h4 className="text-sm font-black text-slate-800">{t('ops.notifications')}</h4>
-                    <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">{t('ops.mark_all_read')}</button>
+               <div className="absolute right-0 top-12 w-96 bg-card dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-50 animate-in slide-in-from-top-2 duration-200">
+                 <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <h4 className="text-sm font-black text-slate-800 dark:text-slate-100">{t('ops.notifications')}</h4>
+                    <button onClick={markAllRead} className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest hover:underline">{t('ops.mark_all_read')}</button>
                  </div>
                  <div className="max-h-80 overflow-y-auto">
                    {notifications.map(n => (
-                     <div key={n.id} className={`p-4 border-b border-slate-50 flex items-start gap-3 ${!n.read ? 'bg-blue-50/50' : ''}`}>
-                       <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
+                     <div key={n.id} className={`p-4 border-b border-slate-50 dark:border-slate-800/50 flex items-start gap-3 ${!n.read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}>
+                       <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'}`}></div>
                        <div>
-                         <p className="text-xs font-bold text-slate-700">{n.text}</p>
-                         <p className="text-[10px] text-slate-400 mt-1">{n.time}</p>
+                         <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{n.text}</p>
+                         <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">{n.time}</p>
                        </div>
                      </div>
                    ))}
@@ -212,7 +234,7 @@ export default function OpsDeskModule() {
            </div>
            <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl shadow-lg">
               <Network size={14} className="text-blue-400" />
-              <span className="text-[10px] font-black uppercase tracking-widest">XYZ-H2H-CENTRAL</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">DOZN-H2H-CENTRAL</span>
            </div>
         </div>
       </div>
@@ -220,11 +242,11 @@ export default function OpsDeskModule() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-8">
           
-          <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+          <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                 <TrendingUp size={20} className="text-blue-600" />
-                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">{t('ops.predictive_monitor')}</h3>
+                 <TrendingUp size={20} className="text-blue-600 dark:text-blue-400" />
+                  <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{t('ops.predictive_monitor')}</h3>
               </div>
               {prediction?.projected_breach_time && !limitOverrideApplied && (
                 <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-red-50 text-red-600">
@@ -232,7 +254,7 @@ export default function OpsDeskModule() {
                 </div>
               )}
               {limitOverrideApplied && (
-                <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-emerald-50 text-emerald-600">
+                <div className="text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50">
                    <CheckCircle2 size={12} /> {t('ops.override_active')}
                 </div>
               )}
@@ -247,18 +269,20 @@ export default function OpsDeskModule() {
                       <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGridColor} />
                   <XAxis dataKey="time" hide />
                   <YAxis hide domain={[0, 100]} />
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: tooltipBg, borderRadius: '12px', border: `1px solid ${tooltipBorder}`, color: tooltipText, fontSize: '10px', fontWeight: 'bold' }}
+                  />
                   <Area type="monotone" dataKey="volume" stroke="#3B82F6" fillOpacity={1} fill="url(#colorVol)" strokeWidth={3} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
                <div className="space-y-1">
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ops.ai_recommendation')}</p>
-                   <p className="text-xs font-bold text-slate-700">{prediction?.recommendation || t('ops.analyzing')}</p>
+                   <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('ops.ai_recommendation')}</p>
+                   <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{prediction?.recommendation || t('ops.analyzing')}</p>
                </div>
                <button 
                  onClick={handleApplyLimitOverride}
@@ -277,47 +301,57 @@ export default function OpsDeskModule() {
           </div>
 
           {/* Corporate Clients Table */}
-          <div className="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+          <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Building size={20} className="text-blue-600" />
+                <Building size={20} className="text-blue-600 dark:text-blue-400" />
                 <div>
-                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">{t('ops.corporate_clients')}</h3>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{CORPORATE_CLIENTS.length} Active Partners</p>
+                  <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{t('ops.corporate_clients')}</h3>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">{filteredClients.length} {t('onb.corporate_clients')}</p>
                 </div>
               </div>
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input 
+                  type="text"
+                  placeholder={t('onb.search')}
+                  value={clientSearch}
+                  onChange={(e) => setClientSearch(e.target.value)}
+                  className="pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-xl text-xs font-bold w-64 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
             </div>
-            <div className="max-h-[500px] overflow-y-auto">
+            <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
               <table className="w-full text-sm">
-                <thead className="bg-slate-50 text-left sticky top-0">
+                <thead className="bg-slate-50 dark:bg-slate-800/50 text-left sticky top-0">
                   <tr>
-                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ops.client_name')}</th>
-                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest">{t('ops.connection')}</th>
-                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.vol_24h')}</th>
-                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.total_tx_month')}</th>
-                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.fee')}</th>
-                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">{t('ops.cashback')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('ops.client_name')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('ops.connection')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t('ops.vol_24h')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t('ops.total_tx_month')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t('ops.fee')}</th>
+                    <th className="px-6 py-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">{t('ops.cashback')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {CORPORATE_CLIENTS.map((client, i) => (
-                    <tr key={i} className="hover:bg-slate-50 transition-colors">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                   {filteredClients.map((client, i) => (
+                    <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 text-[10px] font-black">{client.code.slice(0, 2)}</div>
+                          <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 text-[10px] font-black">{client.code.slice(0, 2)}</div>
                           <div>
-                            <p className="font-black text-slate-800 text-xs">{client.name}</p>
-                            <p className="text-[9px] text-slate-400 font-mono">{client.code}</p>
+                            <p className="font-black text-slate-800 dark:text-slate-200 text-xs">{client.name}</p>
+                            <p className="text-[9px] text-slate-400 dark:text-slate-500 font-mono">{client.code}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-0.5 rounded text-[9px] font-black ${client.connection.includes('SOCKET') ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'}`}>{client.connection}</span>
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-black ${client.connection.includes('SOCKET') ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' : 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'}`}>{client.connection}</span>
                       </td>
-                      <td className="px-6 py-4 text-right font-black text-slate-800 text-xs">{client.vol24h.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right font-black text-slate-800 text-xs">{client.txMonth.toLocaleString()}</td>
-                      <td className="px-6 py-4 text-right text-xs font-bold text-slate-600">{(client.fee / 1000000).toFixed(0)}M</td>
-                      <td className="px-6 py-4 text-right text-xs font-bold text-emerald-600">{(client.cashback / 1000000).toFixed(1)}M</td>
+                      <td className="px-6 py-4 text-right font-black text-slate-800 dark:text-slate-200 text-xs">{client.vol24h.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-right font-black text-slate-800 dark:text-slate-200 text-xs">{client.txMonth.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-right text-xs font-bold text-slate-600 dark:text-slate-400">{(client.fee / 1000000).toFixed(0)}M</td>
+                      <td className="px-6 py-4 text-right text-xs font-bold text-emerald-600 dark:text-emerald-400">{(client.cashback / 1000000).toFixed(1)}M</td>
                     </tr>
                   ))}
                 </tbody>
@@ -362,55 +396,112 @@ export default function OpsDeskModule() {
         </div>
 
         <div className="lg:col-span-4 space-y-8">
-          <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm flex flex-col h-[520px]">
+          <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col min-h-[520px]">
              <div className="flex items-center gap-3 mb-6">
-                <MessageSquare size={24} className="text-blue-600" />
-                <h3 className="text-lg font-black text-slate-800 tracking-tight">{t('ops.support_copilot')}</h3>
+                <MessageSquare size={24} className="text-blue-600 dark:text-blue-400" />
+                <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight">{t('ops.customer_support_copilot')}</h3>
              </div>
-             <div className="relative mb-6">
+             <div className="relative mb-3">
                 <input 
                    type="text" 
                    value={supportQuery}
                    onChange={(e) => setSupportQuery(e.target.value)}
                    onKeyDown={(e) => e.key === 'Enter' && handleSupportSearch()}
-                   placeholder="e.g. 'Show failed tx for Hasjrat last hour'"
-                   className="w-full pl-6 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-bold focus:ring-2 focus:ring-blue-500 outline-none shadow-inner"
+                   placeholder="Ask for an analysis or reconciliation..."
+                   className="w-full pl-6 pr-12 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl text-[11px] font-bold dark:text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none shadow-inner"
                 />
                 <button onClick={handleSupportSearch} className="absolute right-3 top-3 p-1.5 bg-slate-900 text-white rounded-lg">
                    {isQuerying ? <RefreshCw className="animate-spin" size={16} /> : <Search size={16} />}
                 </button>
              </div>
+             
+             {/* Suggested Queries */}
+             <div className="flex flex-wrap gap-2 mb-6">
+                <button 
+                  onClick={() => { setSupportQuery("Reconcile pending TXs for Xendit"); setTimeout(handleSupportSearch, 100); }}
+                  className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors rounded-lg text-[10px] font-bold border border-blue-100 dark:border-blue-800"
+                >
+                  ✨ Reconcile pending TXs for Xendit
+                </button>
+                <button 
+                  onClick={() => { setSupportQuery("Analyze fee leakage across H2H rails"); setTimeout(handleSupportSearch, 100); }}
+                  className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors rounded-lg text-[10px] font-bold border border-emerald-100 dark:border-emerald-800"
+                >
+                  ✨ Analyze fee leakage across H2H rails
+                </button>
+                <button 
+                  onClick={() => { setSupportQuery("Audit security limits for flip"); setTimeout(handleSupportSearch, 100); }}
+                  className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors rounded-lg text-[10px] font-bold border border-indigo-100 dark:border-indigo-800"
+                >
+                  ✨ Audit security limits for Flip
+                </button>
+             </div>
              <div className="flex-1 overflow-y-auto space-y-4 no-scrollbar">
                 {supportResult ? (
                    <div className="space-y-4 animate-in fade-in duration-300">
-                      <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                         <p className="text-[10px] font-bold text-slate-600 italic">"{supportResult.explanation}"</p>
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
+                         <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 italic">"{supportResult.explanation}"</p>
                       </div>
                       <div className="bg-slate-900 p-4 rounded-xl">
                          <pre className="text-[9px] font-mono text-emerald-400 whitespace-pre-wrap">{supportResult.sql}</pre>
                       </div>
-                      <div className="border border-slate-100 rounded-2xl overflow-hidden">
+                      <div className="border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden">
                          <table className="w-full text-[9px]">
-                            <thead className="bg-slate-50">
-                               <tr>{Object.keys(supportResult.data[0] || {}).map(k => <th key={k} className="px-3 py-2 text-left text-slate-400 font-black">{k}</th>)}</tr>
+                            <thead className="bg-slate-50 dark:bg-slate-800/50">
+                               <tr>{Object.keys(supportResult.data[0] || {}).map(k => <th key={k} className="px-3 py-2 text-left text-slate-400 dark:text-slate-500 font-black">{k}</th>)}</tr>
                             </thead>
                             <tbody>
                                {supportResult.data.map((row, i) => (
-                                  <tr key={i} className="border-t border-slate-50">
-                                     {Object.values(row).map((v: any, j) => <td key={j} className="px-3 py-2 text-slate-600 font-bold">{v}</td>)}
+                                  <tr key={i} className="border-t border-slate-50 dark:border-slate-800">
+                                     {Object.values(row).map((v: any, j) => <td key={j} className="px-3 py-2 text-slate-600 dark:text-slate-300 font-bold">{v}</td>)}
                                   </tr>
                                ))}
                             </tbody>
                          </table>
                       </div>
                    </div>
-                ) : (
-                   <div className="h-full flex flex-col items-center justify-center opacity-20 text-center">
+                    ) : (
+                   <div className="h-full flex flex-col items-center justify-center opacity-20 text-center dark:text-slate-100">
                       <Ghost size={48} className="mb-4" />
                       <p className="text-[10px] font-black uppercase tracking-widest">{t('ops.awaiting_command')}<br/>{t('ops.translate_nlp')}</p>
                    </div>
                 )}
              </div>
+          </div>
+
+          {/* Issue Tracker */}
+          <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 mt-8">
+            <div className="flex items-center gap-3">
+              <Clock size={20} className="text-amber-500" />
+              <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{t('ops.issue_tracker')}</h3>
+            </div>
+            <div className="space-y-4">
+              {openIssues.map((issue) => (
+                <div key={issue.id} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] font-mono text-slate-400">{issue.id}</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${
+                      issue.status === 'OPEN' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
+                    }`}>
+                      {issue.status}
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mb-3">{issue.title}</p>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-slate-400">
+                      <span>{t('ops.progress')}</span>
+                      <span>{issue.progress}%</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-blue-500 rounded-full transition-all duration-1000" 
+                        style={{ width: `${issue.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

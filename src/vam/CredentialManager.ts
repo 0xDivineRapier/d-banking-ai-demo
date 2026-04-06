@@ -79,15 +79,15 @@ export class CredentialManager {
   }
 
   /**
-   * Generates BSS Public Key for download and logs the audit event.
+   * Generates XYZ Public Key for download and logs the audit event.
    */
-  public static fetch_bss_public_key(actor: string, client_id: string): string {
+  public static fetch_dozn_public_key(actor: string, client_id: string): string {
     const mockBssKey = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7V+J3+G8J6...
 -----END PUBLIC KEY-----`;
     
     this.log_security_audit('SECRET_REVEAL', actor, client_id, {
-      key_type: 'BSS_PUBLIC_RSA',
+      key_type: 'XYZ.PUBLIC_RSA',
       delivery: 'PORTAL_DOWNLOAD'
     });
     

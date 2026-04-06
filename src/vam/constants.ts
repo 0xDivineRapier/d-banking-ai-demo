@@ -1,5 +1,5 @@
 
-export const VAM_SQL_SCHEMA = `-- Zenith Banking VAM System Schema
+export const VAM_SQL_SCHEMA = `-- Dozn Banking VAM System Schema
 -- Designed for High-Volume Enterprise & BI SNAP Compliance
 -- Architect: Senior Fintech Solutions Architect
 

@@ -55,27 +55,27 @@ export class ReconciliationAgent {
   async reconcile(bankTrxs: BankTransaction[], invoices: ERPInvoice[]): Promise<ReconciliationResult[]> {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Mocking the complex matching logic for BSS demo
+    // Mocking the complex matching logic for XYZ demo
     return [
       {
-        bank_trx_id: 'BSS-BT-001',
-        invoice_id: 'BSS-INV-101',
+        bank_trx_id: 'DOZN-BT-001',
+        invoice_id: 'DOZN-INV-101',
         confidence_score: 0.99,
         match_type: 'AUTO',
         antasena_sector: { name: 'Technology', code: '7020' },
         reasoning: "Exact amount match and vendor name 'Xendit' matches narrative 'XENDIT SETTLEMENT'."
       },
       {
-        bank_trx_id: 'BSS-BT-002',
-        invoice_id: 'BSS-INV-102',
+        bank_trx_id: 'DOZN-BT-002',
+        invoice_id: 'DOZN-INV-102',
         confidence_score: 0.95,
         match_type: 'AUTO',
         antasena_sector: { name: 'Finance', code: '6010' },
         reasoning: "Matched by narrative entity extraction and past settlement history."
       },
       {
-        bank_trx_id: 'BSS-BT-004',
-        invoice_id: 'BSS-INV-104',
+        bank_trx_id: 'DOZN-BT-004',
+        invoice_id: 'DOZN-INV-104',
         confidence_score: 0.82,
         match_type: 'SUGGESTED',
         antasena_sector: { name: 'Finance', code: '6010' },
@@ -89,7 +89,7 @@ export class ReconciliationAgent {
     
     return [
       {
-        trx_id: 'BSS-BT-001',
+        trx_id: 'DOZN-BT-001',
         billed_fee: 2500,
         calculated_fee: 2500,
         discrepancy: 0,
@@ -97,7 +97,7 @@ export class ReconciliationAgent {
         reason: "Institutional flat fee standard applied correctly."
       },
       {
-        trx_id: 'BSS-BT-004',
+        trx_id: 'DOZN-BT-004',
         billed_fee: 1250000,
         calculated_fee: 2500000,
         discrepancy: 1250000,

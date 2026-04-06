@@ -1,7 +1,7 @@
 
 /**
- * Zenith Banking Smart Onboarding Service
- * Specialized for Bank XYZ Admin Dashboard - 'Register VA' Module
+ * Dozn Banking Smart Onboarding Service
+ * Specialized for Dozn Global Admin Dashboard - 'Register VA' Module
  * Architect: Senior Backend Developer
  */
 
@@ -46,7 +46,7 @@ export class OnboardingService {
     "CIF-1001": {
       cif_name: "PT. ABC Corp",
       legal_id: "ID-9921004",
-      corporate_address: "Bank XYZ Strategic Square, Jakarta",
+      corporate_address: "Dozn Global Strategic Square, Jakarta",
       phone: "+62-21-5550192",
       main_account_list: ["10940001", "10940005"]
     },

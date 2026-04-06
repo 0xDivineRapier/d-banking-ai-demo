@@ -20,7 +20,7 @@ export class LimitAgent {
     const lastVolume = history[history.length - 1]?.volume || 0;
     const utilization = (lastVolume / currentLimit) * 100;
     
-    // Predetermined realistic response for BSS Demo
+    // Predetermined realistic response for XYZ Demo
     return {
       projected_breach_time: utilization > 70 ? "16:45" : null,
       current_utilization: Math.round(utilization),

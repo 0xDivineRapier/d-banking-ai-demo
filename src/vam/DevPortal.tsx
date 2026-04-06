@@ -42,9 +42,10 @@ import {
   Wifi,
   WifiOff,
   Server,
-  Gauge
+  Gauge,
+  Users
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useTheme } from '@/components/ThemeProvider';
 import { SimulationEngine, PERSONAS, PersonaType } from './SimulationEngine';
 import { DoznResilientClient } from './resilient-sdk';
 import { CredentialManager, AuditEntry } from './CredentialManager';
@@ -53,7 +54,7 @@ import { CredentialManager, AuditEntry } from './CredentialManager';
 
 const AIArchitectChat = () => {
   const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([
-    { role: 'ai', text: "Systems Architect online. How can I assist with your Bank XYZ integration today?" }
+    { role: 'ai', text: "Systems Architect online. How can I assist with your Dozn Global integration today?" }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -71,13 +72,21 @@ const AIArchitectChat = () => {
     setIsTyping(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("architect-chat", {
-        body: { action: "chat", message: userMsg },
-      });
-      if (error) throw error;
-      setMessages(prev => [...prev, { role: 'ai', text: data.reply || "I'm processing that request..." }]);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const lowerInput = userMsg.toLowerCase();
+      let reply = "I'm processing that SDK configuration request...";
+      if (lowerInput.includes('snap') || lowerInput.includes('bi')) {
+        reply = "Our SNAP BI integration supports both ISO8583 mapped protocols and REST-native endpoints. Ensure your API keys are HMAC-SHA512 compliant.";
+      } else if (lowerInput.includes('error') || lowerInput.includes('heal')) {
+        reply = "The Payload Healer can automatically correct structural errors in your JSON bodies based on the Open Banking OpenAPI spec.";
+      } else {
+        reply = "Architect AI is currently offline. Refer to the standard documentation for basic SDK integration points.";
+      }
+
+      setMessages(prev => [...prev, { role: 'ai', text: reply }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'ai', text: "Connection to Architect Brain temporarily unavailable. Please try again." }]);
+      setMessages(prev => [...prev, { role: 'ai', text: "Connection to Architect Brain temporarily unavailable." }]);
     } finally {
       setIsTyping(false);
     }
@@ -92,7 +101,7 @@ const AIArchitectChat = () => {
           </div>
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-widest">AI Architect Brain</h3>
-            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Active Session: BankXYZ-01</p>
+            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Active Session: BankDOZN-01</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -170,30 +179,32 @@ const SyntheticSandbox = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <div className="lg:col-span-4 space-y-6">
-        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-8">
+        <div className="bg-card/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] space-y-8 h-full">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
-              <FlaskConical size={24} />
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-900/30 dark:to-emerald-800/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center shadow-inner border border-emerald-100/50 dark:border-emerald-800/50">
+              <FlaskConical size={24} className="drop-shadow-sm" />
             </div>
-            <h3 className="text-xl font-black text-slate-800 tracking-tight">Simulation Control</h3>
+            <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Simulation Control</h3>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Persona</label>
-              <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+              <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                <Users size={12} /> Active Persona
+              </label>
+              <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
                 {Object.values(PERSONAS).map(p => (
                   <button 
                     key={p.id}
                     onClick={() => setPersona(p.id)}
-                    className={`p-4 rounded-2xl text-left transition-all border ${
+                    className={`p-4 rounded-2xl text-left transition-all border outline-none ${
                       persona === p.id 
-                        ? 'bg-emerald-50 border-emerald-200 ring-2 ring-emerald-500/20' 
-                        : 'bg-slate-50 border-slate-100 hover:border-slate-200'
+                        ? 'bg-gradient-to-br from-emerald-50/50 to-white dark:from-emerald-900/40 dark:to-slate-900 border-emerald-200 dark:border-emerald-700/50 ring-2 ring-emerald-500/20 shadow-sm' 
+                        : 'bg-card dark:bg-slate-900/40 border-slate-100 dark:border-slate-800/80 hover:border-emerald-200/60 dark:hover:border-emerald-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                     }`}
                   >
-                    <p className={`text-xs font-black ${persona === p.id ? 'text-emerald-700' : 'text-slate-700'}`}>{p.label}</p>
-                    <p className="text-[10px] text-slate-400 mt-1 leading-tight">{p.description}</p>
+                    <p className={`text-xs font-black ${persona === p.id ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>{p.label}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 leading-tight">{p.description}</p>
                   </button>
                 ))}
               </div>
@@ -201,59 +212,80 @@ const SyntheticSandbox = () => {
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Entropy Level</label>
-                <span className="text-[10px] font-mono font-bold text-emerald-600">{(entropy * 100).toFixed(0)}%</span>
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <Wind size={12} /> Entropy Level
+                </label>
+                <div className="px-2 py-0.5 bg-emerald-100/50 dark:bg-emerald-900/30 rounded-md border border-emerald-200/50 dark:border-emerald-800/50">
+                  <span className="text-[10px] font-mono font-black text-emerald-700 dark:text-emerald-400">{(entropy * 100).toFixed(0)}%</span>
+                </div>
               </div>
               <input 
                 type="range" min="0" max="1" step="0.1" 
                 value={entropy}
                 onChange={(e) => setEntropy(parseFloat(e.target.value))}
-                className="w-full accent-emerald-500"
+                className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
               />
             </div>
 
             <button 
               onClick={runSimulation}
               disabled={isSimulating}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all"
+              className="group relative w-full overflow-hidden rounded-2xl p-[1px] disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              {isSimulating ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} />}
-              Generate Synthetic Stream
+              <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-emerald-400 to-indigo-500 animate-[pulse_3s_ease-in-out_infinite]" />
+              <div className="relative bg-[#0A0A0B] px-6 py-4 rounded-2xl flex items-center justify-center gap-2 transition-all">
+                {isSimulating ? <RefreshCw className="animate-spin text-emerald-400" size={16} /> : <Zap className="text-emerald-400 group-hover:text-emerald-300 transition-colors" size={16} />}
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-50 drop-shadow-sm group-hover:text-white transition-colors">
+                  Generate Synthetic Stream
+                </span>
+              </div>
             </button>
           </div>
         </div>
       </div>
 
       <div className="lg:col-span-8">
-        <div className="bg-slate-900 rounded-[40px] border border-slate-800 shadow-2xl overflow-hidden flex flex-col h-[650px]">
-          <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+        <div className="relative bg-[#0A0A0B] rounded-[40px] border border-slate-800/80 shadow-[0_0_40px_rgba(16,185,129,0.03)] overflow-hidden flex flex-col h-[650px] group">
+          {/* Subtle Glitch Overlay */}
+          <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none mix-blend-overlay"></div>
+          
+          <div className="p-6 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/60 backdrop-blur-xl z-10 relative">
             <div className="flex items-center gap-3">
-              <Terminal size={18} className="text-emerald-500" />
-              <h3 className="text-sm font-black text-white uppercase tracking-widest">Telemetry Stream</h3>
+              <Terminal size={18} className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
+              <h3 className="text-sm font-black text-white uppercase tracking-widest drop-shadow-sm flex items-center gap-1">
+                Telemetry Stream 
+                <span className="w-1.5 h-4 bg-emerald-500/80 animate-ping inline-block delay-100" style={{ animationDuration: '1.5s' }}></span>
+              </h3>
             </div>
-            <button onClick={() => setLogs([])} className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">Clear Buffer</button>
+            <button onClick={() => setLogs([])} className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-1">
+              <Trash2 size={12}/> Clear Buffer
+            </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 font-mono text-[10px] space-y-2 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-6 font-mono text-[10px] space-y-2 custom-scrollbar z-10 relative">
             {logs.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center opacity-20 text-white">
-                <Wind size={48} className="mb-4" />
-                <p className="uppercase tracking-[0.3em]">Awaiting Stream Data...</p>
+              <div className="h-full flex flex-col items-center justify-center text-emerald-500/20 group-hover:text-emerald-500/40 transition-colors">
+                <Wind size={48} className="mb-6 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)] animate-pulse" />
+                <p className="uppercase tracking-[0.4em] text-xs font-black">Awaiting Stream Data</p>
+                <div className="w-1/3 h-1 bg-emerald-500/20 rounded-full mt-6 overflow-hidden">
+                  <div className="w-1/2 h-full bg-emerald-500/40 animate-pulse rounded-full" style={{ animationDuration: '2s' }}></div>
+                </div>
               </div>
             ) : (
               logs.map((log, i) => (
-                <div key={i} className="p-3 bg-slate-800/50 border border-slate-700/50 rounded-lg animate-in slide-in-from-right duration-300">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-slate-500">[{log.timestamp?.split('T')[1]?.split('.')[0] || '00:00:00'}]</span>
+                <div key={i} className="group/log p-3 bg-slate-800/30 border border-slate-700/30 hover:bg-slate-800/80 hover:border-emerald-500/30 rounded-lg transition-all animate-in slide-in-from-right duration-300 relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-emerald-500/0 group-hover/log:bg-emerald-500/50 transition-colors"></div>
+                  <div className="flex items-center gap-3 mb-1.5">
+                    <span className="text-slate-500 font-bold">[{log.timestamp?.split('T')[1]?.split('.')[0] || '00:00:00'}]</span>
                     <span className={`px-1.5 py-0.5 rounded-[4px] text-[8px] font-black ${
-                      log.severity === 'CRITICAL' ? 'bg-rose-500 text-white' : 
-                      log.severity === 'WARN' ? 'bg-amber-500 text-white' : 'bg-emerald-500 text-white'
+                      log.severity === 'CRITICAL' ? 'bg-rose-500 text-white shadow-[0_0_8px_rgba(244,63,94,0.6)]' : 
+                      log.severity === 'WARN' ? 'bg-amber-500 text-white shadow-[0_0_8px_rgba(245,158,11,0.6)]' : 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.4)]'
                     }`}>{log.severity}</span>
                     <span className="text-indigo-400 font-black">{log.service_module}</span>
                     <span className="text-slate-400">{log.protocol}</span>
-                    <span className="ml-auto text-slate-500">{log.institution_id}</span>
+                    <span className="ml-auto text-slate-600 group-hover/log:text-slate-400 transition-colors">{log.institution_id}</span>
                   </div>
-                  <div className="text-slate-300 break-all">{log.raw_payload}</div>
+                  <div className="text-slate-300 break-all pl-2 border-l border-slate-700/50 group-hover/log:border-emerald-500/30 group-hover/log:text-emerald-50/90 transition-colors leading-relaxed">{log.raw_payload}</div>
                 </div>
               ))
             )}
@@ -307,34 +339,34 @@ const SDKDemo = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <div className="lg:col-span-5 space-y-6">
-        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-8">
+        <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm space-y-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center">
               <Cpu size={24} />
             </div>
-            <h3 className="text-xl font-black text-slate-800 tracking-tight">SDK Node Configuration</h3>
+            <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">SDK Node Configuration</h3>
           </div>
 
           <div className="space-y-6">
-            <div className="flex p-1 bg-slate-100 rounded-2xl">
+            <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl">
               <button 
                 onClick={() => setMode('sandbox')}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'sandbox' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'sandbox' ? 'bg-card dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-400 dark:text-slate-500'}`}
               >Sandbox</button>
               <button 
                 onClick={() => setMode('production')}
-                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'production' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-400'}`}
+                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'production' ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-sm' : 'text-slate-400 dark:text-slate-500'}`}
               >Production</button>
             </div>
 
-            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
-              <div className="flex items-center gap-2 text-indigo-600">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-3xl border border-slate-100 dark:border-slate-800 space-y-4">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
                 <ShieldCheck size={16} />
                 <span className="text-[10px] font-black uppercase tracking-widest">Resilience Features</span>
               </div>
               <ul className="space-y-2">
                 {['Auto Token Refresh', 'Clock Drift Correction', 'Antasena Compliance Guard', 'Idempotency Auto-Retry'].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
+                  <li key={f} className="flex items-center gap-2 text-[10px] font-bold text-slate-600 dark:text-slate-400">
                     <div className="w-1 h-1 bg-indigo-400 rounded-full"></div>
                     {f}
                   </li>
@@ -394,13 +426,14 @@ const PayloadHealerUI = () => {
   const healPayload = async () => {
     setIsHealing(true);
     try {
-      const { data, error } = await supabase.functions.invoke("architect-chat", {
-        body: { action: "heal_payload", payload },
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setSuggestion({ 
+        status: 'VALID', 
+        fixes: ['Added missing "currency" field in totalAmount structure.'], 
+        healed_payload: '{\n  "partnerServiceId": "9012",\n  "customerNo": "00000001",\n  "totalAmount": {\n    "value": "10000.00",\n    "currency": "IDR"\n  }\n}' 
       });
-      if (error) throw error;
-      setSuggestion(data);
     } catch (e) {
-      setSuggestion({ status: 'CORRUPT', fixes: ['Unable to reach AI gateway. Check network.'], healed_payload: payload });
+      setSuggestion({ status: 'CORRUPT', fixes: ['Unable to analyze payload locally.'], healed_payload: payload });
     } finally {
       setIsHealing(false);
     }
@@ -409,17 +442,17 @@ const PayloadHealerUI = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
       <div className="space-y-6">
-        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center">
               <Bug size={24} />
             </div>
-            <h3 className="text-xl font-black text-slate-800 tracking-tight">Payload Healer</h3>
+            <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Payload Healer</h3>
           </div>
           <textarea 
             value={payload}
             onChange={(e) => setPayload(e.target.value)}
-            className="w-full h-80 bg-slate-50 border border-slate-200 rounded-3xl p-6 font-mono text-xs outline-none focus:border-rose-500 transition-all"
+            className="w-full h-80 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 font-mono text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-rose-500 transition-all"
           />
           <button 
             onClick={healPayload}
@@ -459,9 +492,9 @@ const PayloadHealerUI = () => {
             </div>
           </div>
         ) : (
-          <div className="h-full border-2 border-dashed border-slate-200 rounded-[40px] flex flex-col items-center justify-center text-center p-10 bg-slate-50/50">
-            <Sparkles size={48} className="text-slate-300 mb-4 opacity-20" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <div className="h-full border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[40px] flex flex-col items-center justify-center text-center p-10 bg-slate-50/50 dark:bg-slate-900/20">
+            <Sparkles size={48} className="text-slate-300 dark:text-slate-700 mb-4 opacity-20" />
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
               Input corrupted JSON payload<br/>to trigger AI-assisted remediation.
             </p>
           </div>
@@ -513,38 +546,38 @@ const CredentialGuard = () => {
   return (
     <div className="space-y-8">
       {/* Credential Registry */}
-      <div className="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Key size={20} className="text-indigo-600" />
-            <h3 className="text-xl font-black text-slate-800 tracking-tight">SNAP BI Credential Registry</h3>
+            <Key size={20} className="text-indigo-600 dark:text-indigo-400" />
+            <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">SNAP BI Credential Registry</h3>
           </div>
-          <span className="px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-widest">HMAC-SHA512</span>
+          <span className="px-4 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest">HMAC-SHA512</span>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-left">
+          <thead className="bg-slate-50 dark:bg-slate-800/50 text-left">
             <tr>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Partner Entity</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Client ID</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Expires In</th>
-              <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Partner Entity</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Client ID</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Expires In</th>
+              <th className="px-8 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {MOCK_CREDENTIALS.map(cred => (
-              <tr key={cred.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={cred.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                 <td className="px-8 py-6">
-                  <p className="font-black text-slate-800">{cred.partner}</p>
-                  <p className="text-[10px] font-mono text-slate-400">{cred.id}</p>
+                  <p className="font-black text-slate-800 dark:text-slate-200">{cred.partner}</p>
+                  <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500">{cred.id}</p>
                 </td>
-                <td className="px-8 py-6 font-mono text-xs font-bold text-slate-700">{cred.clientId}</td>
+                <td className="px-8 py-6 font-mono text-xs font-bold text-slate-700 dark:text-slate-400">{cred.clientId}</td>
                 <td className="px-8 py-6">
                   <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase ${
-                    cred.status === 'EXPIRING' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+                    cred.status === 'EXPIRING' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' : 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
                   }`}>{cred.expiresIn}</span>
                 </td>
                 <td className="px-8 py-6 text-right">
-                  <button onClick={() => handleRotateSecret(cred.id)} className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all">
+                  <button onClick={() => handleRotateSecret(cred.id)} className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 dark:hover:bg-indigo-500 hover:text-white transition-all">
                     <RotateCcw size={14} className="inline mr-1" /> Rotate
                   </button>
                 </td>
@@ -556,54 +589,54 @@ const CredentialGuard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Key Validator */}
-        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
           <div className="flex items-center gap-3">
-            <Shield size={20} className="text-indigo-600" />
-            <h4 className="text-lg font-black text-slate-800">RSA Key Validator</h4>
+            <Shield size={20} className="text-indigo-600 dark:text-indigo-400" />
+            <h4 className="text-lg font-black text-slate-800 dark:text-slate-100">RSA Key Validator</h4>
           </div>
           <textarea 
             value={keyInput} 
             onChange={(e) => setKeyInput(e.target.value)}
             placeholder="Paste RSA-2048 Public Key in PEM format..."
-            className="w-full h-32 bg-slate-50 border border-slate-100 rounded-2xl p-4 font-mono text-[10px] outline-none"
+            className="w-full h-32 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl p-4 font-mono text-[10px] text-slate-700 dark:text-slate-200 outline-none"
           />
-          <button onClick={handleValidateKey} className="w-full py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
+          <button onClick={handleValidateKey} className="w-full py-3 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
             Validate Key Compliance
           </button>
           {validationResult && (
-            <div className={`p-4 rounded-2xl text-xs font-bold ${validationResult.valid ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+            <div className={`p-4 rounded-2xl text-xs font-bold ${validationResult.valid ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-100 dark:border-red-800/50'}`}>
               {validationResult.valid ? `✓ Valid RSA-${validationResult.bits} Key` : `✗ ${validationResult.error}`}
             </div>
           )}
         </div>
 
         {/* IP Risk Analyzer */}
-        <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm space-y-6">
+        <div className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[40px] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
           <div className="flex items-center gap-3">
-            <Globe size={20} className="text-indigo-600" />
-            <h4 className="text-lg font-black text-slate-800">IP Risk Intelligence</h4>
+            <Globe size={20} className="text-indigo-600 dark:text-indigo-400" />
+            <h4 className="text-lg font-black text-slate-800 dark:text-slate-100">IP Risk Intelligence</h4>
           </div>
           <input 
             value={ipInput} 
             onChange={(e) => setIpInput(e.target.value)}
             placeholder="Enter IP address to analyze..."
-            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none"
+            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl px-5 py-3 text-sm font-bold dark:text-slate-200 outline-none"
           />
-          <button onClick={handleCheckIp} className="w-full py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
+          <button onClick={handleCheckIp} className="w-full py-3 bg-slate-900 dark:bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">
             Analyze IP Threat Level
           </button>
           {ipRisk && (
             <div className={`p-4 rounded-2xl border space-y-2 ${
-              ipRisk.risk_level === 'HIGH' ? 'bg-red-50 border-red-100' : ipRisk.risk_level === 'MEDIUM' ? 'bg-amber-50 border-amber-100' : 'bg-emerald-50 border-emerald-100'
+              ipRisk.risk_level === 'HIGH' ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/50' : ipRisk.risk_level === 'MEDIUM' ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-100 dark:border-amber-800/50' : 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800/50'
             }`}>
               <div className="flex items-center gap-2">
                 <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
                   ipRisk.risk_level === 'HIGH' ? 'bg-red-500 text-white' : ipRisk.risk_level === 'MEDIUM' ? 'bg-amber-500 text-white' : 'bg-emerald-500 text-white'
                 }`}>{ipRisk.risk_level}</span>
-                <span className="text-xs font-black text-slate-800">{ipInput}</span>
+                <span className="text-xs font-black text-slate-800 dark:text-slate-200">{ipInput}</span>
               </div>
               {ipRisk.reasons.map((r: string, i: number) => (
-                <p key={i} className="text-[10px] text-slate-600 font-bold">• {r}</p>
+                <p key={i} className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">• {r}</p>
               ))}
             </div>
           )}
@@ -671,14 +704,14 @@ const SentinelMonitor = () => {
       {/* System Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
-          { label: 'Nodes Online', val: nodes.filter(n => n.status === 'HEALTHY').length + '/' + nodes.length, color: 'text-emerald-600', icon: Server },
-          { label: 'Avg Latency', val: Math.round(nodes.reduce((a, n) => a + parseInt(n.latency), 0) / nodes.length) + 'ms', color: 'text-blue-600', icon: Gauge },
-          { label: 'Active Alerts', val: alerts.filter(a => !('resolved' in a)).length.toString(), color: 'text-amber-600', icon: AlertTriangle },
-          { label: 'Uptime SLA', val: '99.95%', color: 'text-indigo-600', icon: Activity },
+          { label: 'Nodes Online', val: nodes.filter(n => n.status === 'HEALTHY').length + '/' + nodes.length, color: 'text-emerald-600 dark:text-emerald-400', icon: Server },
+          { label: 'Avg Latency', val: Math.round(nodes.reduce((a, n) => a + parseInt(n.latency), 0) / nodes.length) + 'ms', color: 'text-blue-600 dark:text-blue-400', icon: Gauge },
+          { label: 'Active Alerts', val: alerts.filter(a => !('resolved' in a)).length.toString(), color: 'text-amber-600 dark:text-amber-400', icon: AlertTriangle },
+          { label: 'Uptime SLA', val: '99.95%', color: 'text-indigo-600 dark:text-indigo-400', icon: Activity },
         ].map((s, i) => (
-          <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
+          <div key={i} className="bg-card dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
             <s.icon size={20} className={`${s.color} mb-3`} />
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.label}</p>
+            <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{s.label}</p>
             <p className={`text-2xl font-black ${s.color}`}>{s.val}</p>
           </div>
         ))}
@@ -687,8 +720,8 @@ const SentinelMonitor = () => {
       {/* Node Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {nodes.map(node => (
-          <div key={node.id} className={`bg-white p-8 rounded-[32px] border shadow-sm hover:shadow-lg transition-all group ${
-            node.status === 'DEGRADED' ? 'border-amber-200 bg-amber-50/30' : 'border-slate-200'
+          <div key={node.id} className={`bg-card dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-[32px] border shadow-sm hover:shadow-lg transition-all group ${
+            node.status === 'DEGRADED' ? 'border-amber-200 dark:border-amber-800/50 bg-amber-50/30 dark:bg-amber-900/10' : 'border-slate-200 dark:border-slate-800'
           }`}>
             <div className="flex justify-between items-start mb-6">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
@@ -698,23 +731,23 @@ const SentinelMonitor = () => {
               </div>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${node.status === 'HEALTHY' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500 animate-pulse'}`}></div>
-                <span className={`text-[9px] font-black uppercase tracking-widest ${node.status === 'HEALTHY' ? 'text-emerald-600' : 'text-amber-600'}`}>{node.status}</span>
+                <span className={`text-[9px] font-black uppercase tracking-widest ${node.status === 'HEALTHY' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{node.status}</span>
               </div>
             </div>
-            <h4 className="text-lg font-black text-slate-800 tracking-tight mb-1">{node.label}</h4>
-            <p className="text-[10px] font-mono text-slate-400 mb-4">{node.id}</p>
-            <div className="space-y-2 pt-4 border-t border-slate-100">
+            <h4 className="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight mb-1">{node.label}</h4>
+            <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 mb-4">{node.id}</p>
+            <div className="space-y-2 pt-4 border-t border-slate-100 dark:border-slate-800">
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-400 uppercase">Uptime</span>
-                <span className="text-slate-800">{node.uptime}</span>
+                <span className="text-slate-400 dark:text-slate-500 uppercase tracking-widest">Uptime</span>
+                <span className="text-slate-800 dark:text-slate-200">{node.uptime}</span>
               </div>
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-400 uppercase">Latency</span>
-                <span className={parseInt(node.latency) > 50 ? 'text-amber-600' : 'text-emerald-600'}>{node.latency}</span>
+                <span className="text-slate-400 dark:text-slate-500 uppercase tracking-widest">Latency</span>
+                <span className={parseInt(node.latency) > 50 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}>{node.latency}</span>
               </div>
               <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-slate-400 uppercase">Protocol</span>
-                <span className="text-blue-600 font-mono">{node.protocol}</span>
+                <span className="text-slate-400 dark:text-slate-500 uppercase tracking-widest">Protocol</span>
+                <span className="text-blue-600 dark:text-blue-400 font-mono underline decoration-blue-500/30 underline-offset-4">{node.protocol}</span>
               </div>
             </div>
           </div>
@@ -781,24 +814,24 @@ export default function DevPortal() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-12 pb-20">
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
-        <div className="space-y-4">
+    <div className="max-w-7xl mx-auto space-y-12 pb-20 animate-in fade-in duration-700 relative">
+      <div className="flex flex-col gap-10">
+        <div className="space-y-6 z-10">
           <div className="flex items-center gap-3">
-              <div className="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">{t('dev.ecosystem')}</div>
+              <div className="px-5 py-2 bg-indigo-50/80 dark:bg-indigo-900/40 backdrop-blur-sm border border-indigo-100 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm">{t('dev.ecosystem')}</div>
           </div>
-           <h1 className="text-6xl font-black text-slate-800 tracking-tighter leading-none">{t('dev.title')}</h1>
-           <p className="text-slate-500 text-xl max-w-2xl font-medium leading-relaxed">{t('dev.subtitle')}</p>
+           <h1 className="text-6xl md:text-7xl font-black bg-gradient-to-br from-slate-900 via-slate-700 to-slate-800 dark:from-slate-100 dark:via-slate-300 dark:to-slate-200 bg-clip-text text-transparent tracking-tighter leading-tight drop-shadow-sm">{t('dev.title')}</h1>
+           <p className="text-slate-500 dark:text-slate-400 text-lg md:text-xl max-w-3xl font-medium leading-relaxed">{t('dev.subtitle')}</p>
         </div>
 
-        <div className="flex bg-white p-2 rounded-[40px] border border-slate-200 shadow-xl overflow-x-auto no-scrollbar">
+        <div className="flex bg-card/60 dark:bg-slate-900/60 backdrop-blur-xl p-2.5 rounded-[40px] border border-slate-200/60 dark:border-slate-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] overflow-x-auto no-scrollbar w-full xl:w-max z-10 transition-all">
           {TABS.map(t => (
             <button 
               key={t.id} 
               onClick={() => setActiveTab(t.id as any)} 
-              className={`flex items-center gap-2 px-6 py-4 rounded-[30px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === t.id ? 'bg-indigo-600 text-white shadow-2xl shadow-indigo-200' : 'text-slate-400 hover:text-slate-800'}`}
+              className={`flex items-center gap-2.5 px-6 py-4 rounded-[30px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap outline-none ${activeTab === t.id ? 'bg-indigo-600 text-white shadow-[0_8px_20px_-6px_rgba(79,70,229,0.5)] scale-[1.02]' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'}`}
             >
-              <t.icon size={16} />{t.label}
+              <t.icon size={16} className={activeTab === t.id ? 'animate-pulse' : ''} />{t.label}
             </button>
           ))}
         </div>

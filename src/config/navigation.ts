@@ -4,8 +4,11 @@ import {
   Layout,
   Activity,
   Terminal,
-  Code
+  Code,
+  PieChart,
+  ShieldAlert
 } from 'lucide-react';
+
 import { LucideIcon } from 'lucide-react';
 
 export interface NavSubItem {
@@ -24,6 +27,7 @@ export interface NavItem {
 
 // --- Navigation Data (uses translation keys) ---
 export const getNavItems = (t: (key: string) => string): NavItem[] => [
+  { label: t('nav.overview'), icon: PieChart, to: '/overview', description: t('nav.dashboard_stats'), tourId: 'nav-overview' },
   { label: t('nav.operations'), icon: Activity, to: '/admin', description: t('nav.monitoring'), tourId: 'nav-operations' },
   { label: t('nav.onboarding'), icon: Users, to: '/config', description: t('nav.merchant_registry'), tourId: 'nav-onboarding' },
   { 
@@ -57,9 +61,16 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     ]
   },
   {
-    label: 'API Sandbox', icon: Code,
-    description: 'SNAP API Reference & Testing',
+    label: t('nav.api_sandbox'), icon: Code,
+    description: t('nav.snap_api_ref'),
     tourId: 'nav-sandbox',
     to: '/sandbox',
   },
+  {
+    label: t('nav.risk_mgmt'), icon: ShieldAlert,
+    description: t('nav.sentinel_shield'),
+    tourId: 'nav-risk',
+    to: '/risk',
+  },
 ];
+

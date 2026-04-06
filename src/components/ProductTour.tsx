@@ -237,7 +237,7 @@ export function ProductTour({ steps, isOpen, onClose, onComplete, navigate }: To
           {/* Progress bar */}
           <div className="h-1 bg-muted">
             <div
-              className="h-full zenith-gradient-accent transition-all duration-500 ease-out"
+              className="h-full dozn-gradient-accent transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -246,7 +246,7 @@ export function ProductTour({ steps, isOpen, onClose, onComplete, navigate }: To
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg zenith-gradient-accent flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg dozn-gradient-accent flex items-center justify-center">
                   <Sparkles size={14} className="text-white" />
                 </div>
                 <div>
@@ -290,7 +290,7 @@ export function ProductTour({ steps, isOpen, onClose, onComplete, navigate }: To
                 )}
                 <button
                   onClick={handleNext}
-                  className="flex items-center gap-1 px-4 py-1.5 rounded-lg text-[11px] font-semibold text-primary-foreground zenith-gradient-accent hover:opacity-90 transition-opacity shadow-md"
+                  className="flex items-center gap-1 px-4 py-1.5 rounded-lg text-[11px] font-semibold text-primary-foreground dozn-gradient-accent hover:opacity-90 transition-opacity shadow-md"
                 >
                   {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
                   {currentStep < steps.length - 1 && <ChevronRight size={13} />}
@@ -314,7 +314,7 @@ export function TourTriggerButton({ onClick }: { onClick: () => void }) {
       title="Take a guided tour"
     >
       <Play size={12} className="fill-primary" />
-      <span className="hidden sm:inline">Tour</span>
+      <span className="hidden sm:inline">AI Tour</span>
     </button>
   );
 }

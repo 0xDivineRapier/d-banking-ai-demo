@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronRight, Shield, Cpu } from 'lucide-react';
+import { ChevronRight, Shield, Cpu, Bell } from 'lucide-react';
 import { useI18n } from '@/vam/i18n';
 import { getNavItems, NavItem } from '@/config/navigation';
 
@@ -124,19 +124,19 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
   return (
     <aside
       data-tour="sidebar"
-      className={`zenith-gradient flex flex-col h-full shrink-0 transition-all duration-300 overflow-hidden ${
+      className={`dozn-gradient flex flex-col h-full shrink-0 transition-all duration-300 overflow-hidden ${
         collapsed ? 'w-[60px]' : 'w-[260px]'
       }`}
     >
       {/* Logo */}
       <div className={`p-4 ${collapsed ? 'px-2.5' : ''}`} data-tour="sidebar-logo">
         <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3 px-2'}`}>
-          <div className="w-9 h-9 zenith-gradient-accent rounded-xl flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-9 h-9 dozn-gradient-accent rounded-xl flex items-center justify-center shadow-lg shrink-0">
             <Cpu size={18} className="text-white" />
           </div>
           {!collapsed && (
             <div className="overflow-hidden animate-slide-in">
-              <p className="text-[13px] font-bold text-white tracking-tight leading-none">Bank XYZ</p>
+              <p className="text-[13px] font-bold text-white tracking-tight leading-none">Dozn Global</p>
               <p className="text-[9px] font-mono text-sidebar-foreground/40 mt-0.5 tracking-wider">{t('sidebar.control_plane')}</p>
             </div>
           )}
@@ -157,8 +157,24 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
         ))}
       </nav>
 
+      {/* Notifications Side Bar Panel */}
+      {!collapsed && (
+        <div className="px-4 py-3 border-t border-sidebar-border/40 mt-auto shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.3)] bg-sidebar-background">
+          <button className="w-full flex items-center justify-between group cursor-pointer hover:bg-sidebar-accent p-2 rounded-xl transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                 <Bell size={16} className="text-sidebar-foreground/60 group-hover:text-sidebar-foreground" />
+                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+              </div>
+              <span className="text-xs font-semibold text-sidebar-foreground/80 group-hover:text-sidebar-foreground transition-colors">{t('nav.notifications')}</span>
+            </div>
+            <span className="text-[9px] font-black bg-destructive text-white px-1.5 py-0.5 rounded-md shadow-sm">3</span>
+          </button>
+        </div>
+      )}
+
       {/* Footer */}
-      <div className={`border-t border-sidebar-border/40 ${collapsed ? 'p-2' : 'p-4'}`} data-tour="system-status">
+      <div className={`border-t border-sidebar-border/40 ${collapsed ? 'p-2 mt-auto' : 'p-4'} bg-sidebar-accent/30`} data-tour="system-status">
         {!collapsed ? (
           <div className="px-2 space-y-2">
             <div className="flex items-center gap-2">

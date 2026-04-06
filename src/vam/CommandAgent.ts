@@ -26,7 +26,7 @@ export class CommandAgent {
         summary: "Inter-pool Liquidity Transfer",
         risk_level: 'TIER_2',
         toolCall: {
-          tool: 'bss_internal_rebalance',
+          tool: 'dozn_internal_rebalance',
           parameters: {
             source_pool: "Escrow-Buffer",
             target_pool: "SNAP-Settlement",
@@ -42,7 +42,7 @@ export class CommandAgent {
       status: 'executed',
       summary: "System Health Status",
       risk_level: 'TIER_1',
-      message: "BSS Core Rails are healthy. Settlement headroom currently at 82%."
+      message: "XYZ Core Rails are healthy. Settlement headroom currently at 82%."
     };
   }
 }
