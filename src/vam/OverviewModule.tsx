@@ -1,25 +1,23 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  PieChart, 
-  Pie, 
-  Cell, 
-  ComposedChart, 
-  Bar, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
 } from 'recharts';
 import { RotateCcw, ChevronDown } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
 import { useI18n } from './i18n';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useChartTheme } from '@/hooks/useChartTheme';
 
-// --- Theme/Colors matching screenshot ---
-const COLORS_TRANSACTION = ['#3b82f6', '#10b981', '#f59e0b', '#d1d5db', '#e5e7eb']; // Tech, Goods, Healthcare, Industry, ETC
-const COLORS_FEE = ['#3b82f6', '#10b981', '#f59e0b', '#d1d5db', '#e5e7eb'];
+const SECTOR_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#d1d5db', '#e5e7eb'];
 
 const chartData = [
   { name: '1', amount: 52000, fee: 1800, count: 1250 },
@@ -55,9 +53,9 @@ const chartData = [
 ];
 
 export default function OverviewModule() {
-  const { theme } = useTheme();
   const { t } = useI18n();
   const { trackAction } = useAnalytics();
+  const { gridColor, axisColor, secondaryAxisColor, tooltipStyle } = useChartTheme();
   const [activeDate, setActiveDate] = useState('current');
   const [timeframe, setTimeframe] = useState<'day' | 'monthly' | 'total'>('day');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -70,19 +68,8 @@ export default function OverviewModule() {
   const handleRefresh = () => {
     setIsRefreshing(true);
     trackAction('refresh_dashboard', 'overview');
-    // Simulate data refresh
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1500);
+    setTimeout(() => setIsRefreshing(false), 1500);
   };
-
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const chartGridColor = isDarkMode ? '#1e293b' : '#f1f5f9';
-  const axisColor = isDarkMode ? '#94a3b8' : '#64748b';
-  const secondaryAxisColor = isDarkMode ? '#475569' : '#94a3b8';
-  const tooltipBg = isDarkMode ? '#0f172a' : '#ffffff';
-  const tooltipBorder = isDarkMode ? '#1e293b' : '#e2e8f0';
-  const tooltipText = isDarkMode ? '#f1f5f9' : '#0f172a';
 
   const pieDataTx = useMemo(() => [
     { name: t('ovw.tech'), value: 31 },
@@ -120,7 +107,7 @@ export default function OverviewModule() {
 
       <div className="space-y-8">
         {/* Top Card: Virtual Account Statistics */}
-        <div className="bg-card/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-[40px] border border-slate-200/60 dark:border-slate-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 hover:scale-[1.005] transition-all duration-300">
+        <div className="relative bg-card/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-[40px] border border-slate-200/60 dark:border-slate-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 hover:scale-[1.005] transition-all duration-300">
           
           {/* Card Header & Controls */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-8 py-6 border-b border-slate-100/60 dark:border-slate-800/50">
@@ -208,7 +195,7 @@ export default function OverviewModule() {
                       animationDuration={1500}
                     >
                       {pieDataTx.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS_TRANSACTION[index % COLORS_TRANSACTION.length]} />
+                        <Cell key={`cell-${index}`} fill={SECTOR_COLORS[index % SECTOR_COLORS.length]} />
                       ))}
                     </Pie>
                   </PieChart>
@@ -223,7 +210,7 @@ export default function OverviewModule() {
                 {pieDataTx.map((d, i) => (
                   <div key={i} className="flex items-center justify-between text-xs font-semibold group-hover/donut:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${i * 50}ms` }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS_TRANSACTION[i] }}></div>
+                      <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: SECTOR_COLORS[i] }}></div>
                       <span className="text-slate-600 dark:text-slate-400">{d.name}</span>
                     </div>
                     <span className="text-slate-800 dark:text-slate-200 font-bold">{d.value}%</span>
@@ -248,7 +235,7 @@ export default function OverviewModule() {
                       animationDuration={1500}
                     >
                       {pieDataFee.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS_FEE[index % COLORS_FEE.length]} />
+                        <Cell key={`cell-${index}`} fill={SECTOR_COLORS[index % SECTOR_COLORS.length]} />
                       ))}
                     </Pie>
                   </PieChart>
@@ -263,7 +250,7 @@ export default function OverviewModule() {
                 {pieDataFee.map((d, i) => (
                   <div key={i} className="flex items-center justify-between text-xs font-semibold group-hover/donut:translate-x-1 transition-transform duration-300" style={{ transitionDelay: `${i * 50}ms` }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS_FEE[i] }}></div>
+                      <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: SECTOR_COLORS[i] }}></div>
                       <span className="text-slate-600 dark:text-slate-400">{d.name}</span>
                     </div>
                     <span className="text-slate-800 dark:text-slate-200 font-bold">{d.value}%</span>
@@ -337,14 +324,14 @@ export default function OverviewModule() {
 
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGridColor} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                 
                 {/* X Axis: 1 to 30 */}
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: axisColor, fontSize: 10, fontWeight: 'bold' }}
+                  tick={{ fill: axisColor, fontSize: 10, fontWeight: 600 }}
                   dy={15}
                 />
                 
@@ -354,8 +341,8 @@ export default function OverviewModule() {
                   orientation="left" 
                   axisLine={false} 
                   tickLine={false}
-                  tick={{ fill: secondaryAxisColor, fontSize: 10, fontWeight: 'bold' }}
-                  label={{ value: '(Rp)', position: 'top', offset: -15, fill: secondaryAxisColor, fontSize: 10, fontWeight: 'bold' }}
+                  tick={{ fill: secondaryAxisColor, fontSize: 10, fontWeight: 600 }}
+                  label={{ value: '(Rp)', position: 'top', offset: -15, fill: secondaryAxisColor, fontSize: 10, fontWeight: 600 }}
                   dx={-15}
                 />
                 
@@ -365,13 +352,13 @@ export default function OverviewModule() {
                   orientation="right" 
                   axisLine={false} 
                   tickLine={false}
-                  tick={{ fill: secondaryAxisColor, fontSize: 10, fontWeight: 'bold' }}
-                  label={{ value: '(Cnt)', position: 'top', offset: -15, fill: secondaryAxisColor, fontSize: 10, fontWeight: 'bold' }}
+                  tick={{ fill: secondaryAxisColor, fontSize: 10, fontWeight: 600 }}
+                  label={{ value: '(Cnt)', position: 'top', offset: -15, fill: secondaryAxisColor, fontSize: 10, fontWeight: 600 }}
                   dx={15}
                 />
                 
-                <Tooltip 
-                  contentStyle={{ backgroundColor: tooltipBg, borderRadius: '12px', border: `1px solid ${tooltipBorder}`, color: tooltipText, fontWeight: 'bold', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }} 
+                <Tooltip
+                  contentStyle={tooltipStyle}
                   itemStyle={{ fontWeight: 'bold' }}
                 />
                 
