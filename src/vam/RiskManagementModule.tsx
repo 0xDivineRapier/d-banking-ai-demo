@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useI18n } from './i18n';
 import { 
@@ -126,9 +125,22 @@ const FiveLayerSecurity = () => {
 
 // --- Main Module ---
 
+type RiskTab = 'OVERVIEW' | 'SENTINEL' | 'GRAPH';
+
+const RISK_TABS: { id: RiskTab; label: string; icon: React.ElementType }[] = [
+  { id: 'OVERVIEW', label: 'Shield Hub', icon: ShieldCheck },
+  { id: 'SENTINEL', label: 'Threat Sentinel', icon: ShieldAlert },
+  { id: 'GRAPH', label: 'Relation Graph', icon: BrainCircuit },
+];
+
 export default function RiskManagementModule() {
   const { t } = useI18n();
-  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'SENTINEL' | 'GRAPH'>('OVERVIEW');
+  const [activeTab, setActiveTab] = useState<RiskTab>('OVERVIEW');
+
+  const patternBarHeights = useMemo(
+    () => Array.from({ length: 40 }, () => 20 + Math.random() * 80),
+    []
+  );
 
   return (
     <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in duration-700">
@@ -146,14 +158,10 @@ export default function RiskManagementModule() {
         </div>
         
         <div className="flex bg-card/50 dark:bg-slate-900/40 p-1.5 rounded-[32px] border border-slate-200/60 dark:border-slate-800/80 backdrop-blur-xl shrink-0">
-           {[
-             { id: 'OVERVIEW', label: 'Shield Hub', icon: ShieldCheck },
-             { id: 'SENTINEL', label: 'Threat Sentinel', icon: ShieldAlert },
-             { id: 'GRAPH', label: 'Relation Graph', icon: BrainCircuit },
-           ].map(tab => (
-             <button 
+           {RISK_TABS.map(tab => (
+             <button
                key={tab.id}
-               onClick={() => setActiveTab(tab.id as any)}
+               onClick={() => setActiveTab(tab.id)}
                className={`flex items-center gap-3 px-8 py-4 rounded-[26px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-orange-600 text-white shadow-xl shadow-orange-900/20' : 'text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}
              >
                <tab.icon size={16} /> {tab.label}
@@ -186,14 +194,14 @@ export default function RiskManagementModule() {
                </div>
                
                <div className="h-[240px] flex items-end gap-2 px-2">
-                  {Array.from({ length: 40 }).map((_, i) => (
-                    <div 
-                      key={i} 
+                  {patternBarHeights.map((height, i) => (
+                    <div
+                      key={i}
                       className="bg-orange-500/20 dark:bg-orange-500/10 hover:bg-orange-500 transition-all rounded-t-sm flex-1 group relative"
-                      style={{ height: `${20 + Math.random() * 80}%` }}
+                      style={{ height: `${height}%` }}
                     >
                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-all">
-                          {Math.floor(Math.random() * 1000)}ms
+                          {Math.round(height * 10)}ms
                        </div>
                     </div>
                   ))}

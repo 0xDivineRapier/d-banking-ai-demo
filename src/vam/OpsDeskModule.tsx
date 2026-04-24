@@ -1,14 +1,14 @@
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useI18n } from './i18n';
-import { 
-  Activity, 
-  ShieldAlert, 
-  TrendingUp, 
-  Zap, 
-  Search, 
-  MessageSquare, 
-  Clock, 
+import {
+  Activity,
+  ShieldAlert,
+  TrendingUp,
+  Zap,
+  Search,
+  MessageSquare,
+  Clock,
   AlertTriangle,
   RefreshCw,
   Terminal,
@@ -16,24 +16,21 @@ import {
   Bell,
   CheckCircle2,
   Ghost,
-  ArrowUpRight,
   ShieldX,
   X,
   Check,
   Building,
-  DollarSign,
-  Users
 } from 'lucide-react';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
 } from 'recharts';
-import { useTheme } from '@/components/ThemeProvider';
+import { useChartTheme } from '@/hooks/useChartTheme';
 import { LogMonitorAgent, LogEntry, AgentDiagnosis } from './LogMonitorAgent';
 import { ReportingAgent, ReportResult } from './ReportingAgent';
 import { SimulationEngine } from './SimulationEngine';
@@ -64,8 +61,8 @@ const CORPORATE_CLIENTS = [
 ];
 
 export default function OpsDeskModule() {
-  const { theme } = useTheme();
   const { t, language } = useI18n();
+  const { gridColor, tooltipStyle } = useChartTheme();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [diagnosis, setDiagnosis] = useState<AgentDiagnosis | null>(null);
   const [clientSearch, setClientSearch] = useState('');
@@ -75,11 +72,6 @@ export default function OpsDeskModule() {
     { id: 'ISS-108', title: 'Credential rotation failed for PT. Flip', status: 'IN_PROGRESS', progress: 40 },
   ]);
 
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const chartGridColor = isDarkMode ? '#1e293b' : '#f1f5f9';
-  const tooltipBg = isDarkMode ? '#0f172a' : '#ffffff';
-  const tooltipBorder = isDarkMode ? '#1e293b' : '#e2e8f0';
-  const tooltipText = isDarkMode ? '#f1f5f9' : '#0f172a';
   const [supportQuery, setSupportQuery] = useState('');
   const [supportResult, setSupportResult] = useState<ReportResult | null>(null);
   const [isQuerying, setIsQuerying] = useState(false);
@@ -137,20 +129,22 @@ export default function OpsDeskModule() {
     runPrediction();
   }, [volumeData]);
 
-  const handleSupportSearch = async () => {
-    if (!supportQuery) return;
+  const handleSupportSearch = useCallback(async (queryOverride?: string) => {
+    const query = queryOverride ?? supportQuery;
+    if (!query) return;
+    if (queryOverride) setSupportQuery(queryOverride);
     setIsQuerying(true);
     setQuotaExceeded(false);
     try {
-      const res = await reportAgent.current.queryInsights(supportQuery, language as 'en' | 'ko');
+      const res = await reportAgent.current.queryInsights(query, language as 'en' | 'ko');
       setSupportResult(res);
-    } catch (e: any) {
-      console.error(e);
-      if (e.message?.includes('429')) setQuotaExceeded(true);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : '';
+      if (msg.includes('429')) setQuotaExceeded(true);
     } finally {
       setIsQuerying(false);
     }
-  };
+  }, [supportQuery, language]);
 
   const handleApplyLimitOverride = () => {
     setLimitOverrideApplied(true);
@@ -269,12 +263,10 @@ export default function OpsDeskModule() {
                       <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartGridColor} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                   <XAxis dataKey="time" hide />
                   <YAxis hide domain={[0, 100]} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: tooltipBg, borderRadius: '12px', border: `1px solid ${tooltipBorder}`, color: tooltipText, fontSize: '10px', fontWeight: 'bold' }}
-                  />
+                  <Tooltip contentStyle={{ ...tooltipStyle, fontSize: '10px' }} />
                   <Area type="monotone" dataKey="volume" stroke="#3B82F6" fillOpacity={1} fill="url(#colorVol)" strokeWidth={3} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -417,20 +409,20 @@ export default function OpsDeskModule() {
              
              {/* Suggested Queries */}
              <div className="flex flex-wrap gap-2 mb-6">
-                <button 
-                  onClick={() => { setSupportQuery("Reconcile pending TXs for Xendit"); setTimeout(handleSupportSearch, 100); }}
+                <button
+                  onClick={() => handleSupportSearch("Reconcile pending TXs for Xendit")}
                   className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors rounded-lg text-[10px] font-bold border border-blue-100 dark:border-blue-800"
                 >
                   ✨ Reconcile pending TXs for Xendit
                 </button>
-                <button 
-                  onClick={() => { setSupportQuery("Analyze fee leakage across H2H rails"); setTimeout(handleSupportSearch, 100); }}
+                <button
+                  onClick={() => handleSupportSearch("Analyze fee leakage across H2H rails")}
                   className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors rounded-lg text-[10px] font-bold border border-emerald-100 dark:border-emerald-800"
                 >
                   ✨ Analyze fee leakage across H2H rails
                 </button>
-                <button 
-                  onClick={() => { setSupportQuery("Audit security limits for flip"); setTimeout(handleSupportSearch, 100); }}
+                <button
+                  onClick={() => handleSupportSearch("Audit security limits for Flip")}
                   className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors rounded-lg text-[10px] font-bold border border-indigo-100 dark:border-indigo-800"
                 >
                   ✨ Audit security limits for Flip

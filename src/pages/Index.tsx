@@ -3,10 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import { Database } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 
-import FinanceCockpit from '@/vam/FinanceCockpit';
-import OjkReportingModule from '@/vam/OjkReportingModule';
-import VaTransactionsModule from '@/vam/VaTransactionsModule';
-
+const FinanceCockpit = lazy(() => import('@/vam/FinanceCockpit'));
+const OjkReportingModule = lazy(() => import('@/vam/OjkReportingModule'));
+const VaTransactionsModule = lazy(() => import('@/vam/VaTransactionsModule'));
 const OnboardingModule = lazy(() => import('@/vam/OnboardingModule'));
 const OpsDeskModule = lazy(() => import('@/vam/OpsDeskModule'));
 const ApiSandbox = lazy(() => import('@/vam/ApiSandbox'));

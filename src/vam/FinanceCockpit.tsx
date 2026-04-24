@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import {
-  BrainCircuit, RefreshCw, Send, ChevronRight, ShieldAlert,
+  BrainCircuit, RefreshCw, Send,
   CheckCircle2, AlertCircle, TrendingUp, DollarSign, Zap,
-  LayoutGrid, FileText, Activity, ArrowRight, Clock, Info,
-  Sparkles, MessageSquare, X, ChevronDown
+  LayoutGrid, Activity, ArrowRight, Clock, Info,
+  Sparkles,
 } from 'lucide-react';
 import { FinanceAssistantAgent, AssistantResponse } from './FinanceAssistantAgent';
 import { ReconciliationAgent, ReconciliationResult, FeeAuditResult, SuspenseResolution } from './ReconciliationAgent';
@@ -476,7 +477,7 @@ export default function FinanceCockpit() {
     if (tab === 'reconciliation') setTriggerRecon(true);
   };
 
-  const tabs: { id: ActiveTab; label: string; icon: any }[] = [
+  const tabs: { id: ActiveTab; label: string; icon: LucideIcon }[] = [
     { id: 'heatmap', label: t('nav.liquidity_heatmap'), icon: Activity },
     { id: 'reconciliation', label: t('nav.erp_reconciliation'), icon: RefreshCw },
     { id: 'revenue', label: t('fin.revenue_assurance'), icon: TrendingUp },
